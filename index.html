@@ -1,0 +1,4957 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>TeritipDB — Dokumentasi</title>
+<meta name="description" content="TeritipDB: mesin database JSON. Dokumentasi, sintaks, dan target server.">
+<style>
+  :root{
+    --bg:#ffffff;
+    --bg2:#fafafa;
+    --panel:#ffffff;
+    --panel2:#f6f6f7;
+    --line:#e5e7eb;
+    --line2:#d4d4d8;
+    --ink:#18181b;
+    --muted:#52525b;
+    --dim:#9ca3af;
+    --accent:#18181b;
+    --accent2:#111827;
+    --code-bg:#f7f7f8;
+    --radius:14px;
+    --mono:ui-monospace,SFMono-Regular,"JetBrains Mono","Cascadia Code",Consolas,monospace;
+    --sans:system-ui,-apple-system,"Segoe UI",Roboto,"Helvetica Neue",Arial,sans-serif;
+  }
+  *{box-sizing:border-box}
+  html{scroll-behavior:smooth}
+  body{margin:0;background:var(--bg);color:var(--ink);font-family:var(--sans);line-height:1.65;-webkit-font-smoothing:antialiased}
+  a{color:inherit;text-decoration:none}
+  article.doc a{color:var(--ink);border-bottom:1px solid rgba(24,24,27,.3)}
+  article.doc a:hover{border-bottom-color:var(--ink)}
+  code{font-family:var(--mono);font-size:.9em;background:#f1f1f3;border:1px solid var(--line);padding:.12em .42em;border-radius:6px;color:#111}
+  pre.code{background:var(--code-bg);border:1px solid var(--line);border-radius:12px;padding:16px;overflow:auto;position:relative;margin:16px 0}
+  pre.code code{background:none;border:0;padding:0;color:#1f2937;font-size:13px;line-height:1.7;white-space:pre}
+  pre.code code .c-com{color:#94a3b8;font-style:italic}
+  pre.code code .c-key{color:#2563eb}
+  pre.code code .c-str{color:#047857}
+  pre.code code .c-num{color:#b45309}
+  pre.code code .c-kw{color:#7c3aed;font-weight:600}
+  .copy{position:absolute;top:8px;right:8px;background:#fff;color:var(--ink);border:1px solid var(--line2);border-radius:8px;font:600 11px var(--sans);padding:4px 9px;cursor:pointer;opacity:0;transition:.15s}
+  pre.code:hover .copy{opacity:1}
+  .copy:hover{background:#f4f4f5}
+
+  /* top bar */
+  header.top{position:sticky;top:0;z-index:50;backdrop-filter:blur(10px);background:rgba(255,255,255,.88);border-bottom:1px solid var(--line)}
+  .top-in{max-width:1240px;margin:0 auto;padding:12px 20px;display:flex;align-items:center;gap:14px}
+  .brand{display:flex;align-items:center;gap:12px;font-weight:700;letter-spacing:.2px;border:0}
+  .logo-crop{display:inline-block;overflow:hidden;position:relative;height:34px;width:calc(406px * 34 / 110)}
+  .logo-crop img{position:absolute;left:calc(-54px * 34 / 110);top:calc(-90px * 34 / 110);height:calc(256px * 34 / 110);width:auto;max-width:none}
+  .ver{font:600 11px var(--mono);color:var(--ink);background:#f4f4f5;border:1px solid var(--line);padding:3px 8px;border-radius:999px}
+  .top-spacer{flex:1}
+  .status{display:flex;align-items:center;gap:8px;font-size:12px;color:var(--muted)}
+  .dot{width:8px;height:8px;border-radius:50%;background:var(--ink);box-shadow:0 0 0 3px rgba(24,24,27,.12)}
+  .btn{font:600 13px var(--sans);color:var(--ink);background:#fff;border:1px solid var(--line2);border-radius:9px;padding:7px 12px;cursor:pointer;transition:.15s}
+  .btn:hover{border-color:var(--ink);background:#f4f4f5}
+  .lang-btn{font-family:var(--mono);font-weight:700;letter-spacing:.5px;min-width:46px}
+  .menu-btn{display:none}
+
+  /* hero */
+  .hero{max-width:1240px;margin:0 auto;padding:46px 20px 10px}
+  .hero-grid{display:grid;grid-template-columns:1.35fr .65fr;gap:26px;align-items:center}
+  .eyebrow{display:inline-flex;align-items:center;gap:8px;font:600 12px var(--mono);color:var(--ink);letter-spacing:.5px;text-transform:uppercase;margin-bottom:14px}
+  .hero h1{font-size:clamp(30px,5vw,52px);line-height:1.08;margin:0 0 14px;letter-spacing:-.02em}
+  .hero h1 em{font-style:normal;font-weight:800}
+  .hero p.lead{color:var(--muted);font-size:17px;max-width:60ch;margin:0 0 20px}
+  .badges{display:flex;flex-wrap:wrap;gap:8px}
+  .badge{font:600 12px var(--mono);color:var(--muted);background:#f6f6f7;border:1px solid var(--line);padding:5px 11px;border-radius:999px}
+  .install-card{background:#fafafa;border:1px solid var(--line);border-radius:var(--radius);padding:18px}
+  .install-card .lbl{font:600 11px var(--mono);text-transform:uppercase;letter-spacing:.6px;color:var(--dim);margin-bottom:8px}
+  .install-card pre{margin:0}
+  .flow{font-family:var(--mono);font-size:12.5px;color:var(--muted);margin-top:12px}
+
+  /* layout */
+  .wrap{max-width:1240px;margin:22px auto 80px;padding:0 20px;display:grid;grid-template-columns:270px minmax(0,1fr);gap:30px;align-items:start}
+  aside.nav{position:sticky;top:74px;background:#fff;border:1px solid var(--line);border-radius:var(--radius);padding:14px;max-height:calc(100vh - 96px);display:flex;flex-direction:column;overflow:hidden}
+  aside.nav h4{flex:0 0 auto}
+  .nav-find{flex:0 0 auto}
+  .nav-list{flex:1 1 auto;min-height:0;overflow:auto;scrollbar-width:none;-ms-overflow-style:none}
+  .nav-list::-webkit-scrollbar{width:0;height:0;display:none}
+  aside.nav h4{margin:4px 8px 10px;font-size:12px;text-transform:uppercase;letter-spacing:.6px;color:var(--dim)}
+  .nav a{display:block;padding:9px 11px;border-radius:9px;color:var(--muted);font-size:14px;border:1px solid transparent}
+  .nav a:hover{background:#f4f4f5;color:var(--ink);text-decoration:none}
+  .nav a.active{background:#f4f4f5;color:var(--ink);border-color:var(--line2);box-shadow:inset 3px 0 0 var(--ink);font-weight:600}
+  .nav a small{display:block;color:var(--dim);font-size:11.5px;margin-top:2px}
+  .nav a .pop{font:700 9px var(--sans);text-transform:uppercase;letter-spacing:.4px;color:#fff;background:var(--ink);border-radius:999px;padding:2px 6px;vertical-align:middle}
+  .nav-sub{display:none;margin:2px 0 8px 12px;padding-left:10px;border-left:2px solid var(--line)}
+  .nav a.active + .nav-sub{display:block}
+  .nav-sub a{display:flex;gap:8px;padding:5px 8px;border-radius:7px;color:var(--muted);font-size:12.5px;border:0}
+  .nav-sub a:hover{background:#f4f4f5;color:var(--ink);text-decoration:none}
+  .nav-sub a.active{background:rgba(24,24,27,.06);color:var(--ink);font-weight:600}
+  .nav-sub .ns-txt{line-height:1.3}
+  .nav-find{width:100%;box-sizing:border-box;margin:0 0 10px;background:#f6f6f7;border:1px solid var(--line);color:var(--ink);border-radius:9px;padding:8px 10px;font:500 13px var(--sans)}
+  .nav-find:focus{outline:none;border-color:var(--ink);background:#fff}
+
+  /* daftar item per dokumen */
+  .toc{margin:10px 0 6px;border:1px solid var(--line);border-radius:12px;padding:14px;background:#fafafa}
+  .toc-title{display:flex;align-items:center;gap:10px;font:600 12px var(--mono);text-transform:uppercase;letter-spacing:.6px;color:var(--dim);margin-bottom:10px}
+  .toc-find{margin-left:auto;background:#fff;border:1px solid var(--line2);color:var(--ink);border-radius:8px;padding:5px 10px;font:500 12px var(--sans);text-transform:none;letter-spacing:normal;min-width:180px}
+  .toc-find:focus{outline:none;border-color:var(--ink)}
+  .toc-grid{display:none;grid-template-columns:repeat(auto-fill,minmax(215px,1fr));gap:8px}
+  .toc.open .toc-grid,.toc.searching .toc-grid{display:grid}
+  .toc-title{cursor:pointer}
+  .toc-title .toc-caret{display:inline-block;transition:.15s;color:var(--dim)}
+  .toc-title .toc-caret::before{content:"\25B8"}
+  .toc.open .toc-title .toc-caret::before{content:"\25BE"}
+  .toc-grid a{display:flex;gap:9px;align-items:flex-start;padding:9px 11px;border:1px solid var(--line);border-radius:10px;background:#fff;color:var(--muted);font-size:13.5px;transition:.12s}
+  .toc-grid a:hover{border-color:var(--ink);color:var(--ink);background:#f4f4f5;text-decoration:none}
+  .toc-num{flex:0 0 auto;font:700 11px var(--mono);color:#fff;background:var(--ink);border:1px solid var(--ink);border-radius:6px;padding:1px 6px;margin-top:1px}
+  .toc-txt{line-height:1.32}
+  .toc-grid a.active{border-color:var(--ink);background:#f4f4f5;color:var(--ink)}
+  article.doc h2:target,article.doc h3:target{background:#f4f4f5;border-radius:8px;box-shadow:0 0 0 6px #f4f4f5}
+
+  main{min-width:0}
+  article.doc{background:#fff;border:1px solid var(--line);border-radius:var(--radius);padding:26px 30px;margin-bottom:26px;scroll-margin-top:80px}
+  .doc-head{display:flex;flex-wrap:wrap;align-items:center;gap:10px;border-bottom:1px solid var(--line);padding-bottom:14px;margin-bottom:8px}
+  .doc-head .fname{font:600 12px var(--mono);color:var(--ink)}
+  .doc-head .meta{margin-left:auto;font:500 12px var(--mono);color:var(--dim)}
+  .doc-head .back{margin-left:12px;font-size:12.5px;color:var(--muted);border-bottom:0}
+  .doc-head .back:hover{color:var(--ink)}
+
+  article.doc h1{font-size:30px;margin:.6em 0 .4em;letter-spacing:-.01em}
+  article.doc h2{font-size:22px;margin:1.5em 0 .5em;padding-top:.3em;border-top:1px dashed var(--line)}
+  article.doc h3{font-size:17px;margin:1.3em 0 .4em;color:#3f3f46}
+  article.doc h4,article.doc h5,article.doc h6{font-size:14px;color:var(--muted);margin:1.1em 0 .3em}
+  article.doc p{color:#3f3f46;margin:.7em 0}
+  article.doc ul,article.doc ol{color:#3f3f46;padding-left:1.5em;margin:.6em 0}
+  article.doc li{margin:.28em 0}
+  article.doc li>ul,article.doc li>ol{margin:.2em 0}
+  article.doc hr{border:0;border-top:1px solid var(--line);margin:1.6em 0}
+  article.doc blockquote{margin:1em 0;padding:.6em 1em;border-left:3px solid var(--ink);background:#fafafa;border-radius:0 10px 10px 0;color:#3f3f46}
+  article.doc blockquote p{margin:.3em 0}
+  .table-wrap{overflow:auto;margin:14px 0;border:1px solid var(--line);border-radius:12px}
+  article.doc table{border-collapse:collapse;width:100%;font-size:13.5px;min-width:520px}
+  article.doc th,article.doc td{padding:10px 12px;border-bottom:1px solid var(--line);vertical-align:top;color:#3f3f46}
+  article.doc thead th{background:#f4f4f5;color:var(--ink);font-weight:600;text-align:left}
+  article.doc tbody tr:hover{background:#fafafa}
+  article.doc tbody tr:last-child td{border-bottom:0}
+
+  [hidden]{display:none!important}
+  .doc-lead{margin-top:4px}
+  .doc-view{margin-top:18px;scroll-margin-top:84px}
+  .doc-pager{display:flex;align-items:center;gap:12px;margin-top:20px;padding-top:14px;border-top:1px dashed var(--line)}
+  .doc-pager .pager-label{margin:0 auto;color:var(--muted);font:500 12.5px var(--mono);text-align:center}
+  .pager-btn[disabled]{opacity:.4;cursor:not-allowed}
+
+  footer{max-width:1240px;margin:0 auto;padding:24px 20px 60px;color:var(--dim);font-size:13px;border-top:1px solid var(--line)}
+  footer .row{display:flex;flex-wrap:wrap;gap:12px;justify-content:space-between}
+
+  /* beranda */
+  .home{max-width:1240px;margin:0 auto;padding:10px 20px 30px}
+  .home h2{font-size:20px;margin:0 0 4px;letter-spacing:-.01em}
+  .home .sub{color:var(--muted);margin:0 0 18px;font-size:14.5px}
+  .home-cards{display:grid;grid-template-columns:repeat(auto-fit,minmax(238px,1fr));gap:14px}
+  .home-card{display:block;background:#fff;border:1px solid var(--line);border-radius:14px;padding:18px;transition:.15s}
+  .home-card:hover{border-color:var(--ink);transform:translateY(-2px);box-shadow:0 10px 26px rgba(0,0,0,.07)}
+  .home-card .h-ico{width:34px;height:34px;border-radius:9px;background:#f1f1f3;color:var(--ink);display:inline-flex;align-items:center;justify-content:center;margin-bottom:10px}
+  .home-card .h-ico svg{width:18px;height:18px}
+  .home-card h3{margin:0 0 6px;font-size:16px}
+  .home-card p{margin:0;color:var(--muted);font-size:13.5px}
+  .home-card .pop{font:700 9px var(--sans);text-transform:uppercase;color:#fff;background:var(--ink);border-radius:999px;padding:2px 7px;margin-left:8px;vertical-align:middle}
+  .home-facts{display:flex;flex-wrap:wrap;gap:10px;margin-top:22px}
+  .home-fact{border:1px solid var(--line);border-radius:12px;padding:12px 16px;background:#fafafa;min-width:150px}
+  .home-fact b{display:block;font-size:18px;letter-spacing:-.01em}
+  .home-fact span{color:var(--muted);font-size:12.5px}
+
+  /* keuntungan */
+  .benefits{max-width:1240px;margin:0 auto;padding:8px 20px 40px}
+  .benefits h2{font-size:20px;margin:0 0 4px;letter-spacing:-.01em}
+  .benefits .sub{color:var(--muted);margin:0 0 18px;font-size:14.5px}
+  .benefit-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(238px,1fr));gap:12px}
+  .benefit{display:flex;gap:12px;align-items:flex-start;background:#fff;border:1px solid var(--line);border-radius:12px;padding:14px 15px}
+  .benefit .b-ico{flex:0 0 auto;width:32px;height:32px;border-radius:9px;background:#f1f1f3;color:var(--ink);display:flex;align-items:center;justify-content:center;line-height:1}
+  .benefit .b-ico svg{width:17px;height:17px}
+  .benefit h4{margin:0 0 3px;font-size:14px}
+  .benefit p{margin:0;color:var(--muted);font-size:13px;line-height:1.5}
+
+  @media(max-width:960px){
+    .hero-grid{grid-template-columns:1fr}
+    .wrap{grid-template-columns:1fr}
+    aside.nav{position:fixed;inset:60px 12px auto 12px;z-index:60;display:none;max-height:70vh;overflow:hidden}
+    aside.nav.open{display:flex}
+    .menu-btn{display:inline-block}
+    article.doc{padding:20px 16px}
+  }
+</style>
+</head>
+<body>
+
+<header class="top">
+  <div class="top-in">
+    <a class="brand" href="#beranda" aria-label="TeritipDB">
+      <span class="logo-crop"><img src="aset/logo.png" alt="TeritipDB"></span>
+      <span class="ver">v0.9.0</span>
+    </a>
+    <div class="top-spacer"></div>
+    <div class="status"><span class="dot"></span><span id="syncText" data-i18n="status">dokumen tersemat</span></div>
+    <button class="btn lang-btn" id="langBtn"><svg viewBox="0 -960 960 960" width="15" height="15" fill="currentColor" aria-hidden="true"><path d="M325-111.5q-73-31.5-127.5-86t-86-127.5Q80-398 80-480.5t31.5-155q31.5-72.5 86-127t127.5-86Q398-880 480.5-880t155 31.5q72.5 31.5 127 86t86 127Q880-563 880-480.5T848.5-325q-31.5 73-86 127.5t-127 86Q563-80 480.5-80T325-111.5ZM480-162q26-36 45-75t31-83H404q12 44 31 83t45 75Zm-104-16q-18-33-31.5-68.5T322-320H204q29 50 72.5 87t99.5 55Zm208 0q56-18 99.5-55t72.5-87H638q-9 38-22.5 73.5T584-178ZM170-400h136q-3-20-4.5-39.5T300-480q0-21 1.5-40.5T306-560H170q-5 20-7.5 39.5T160-480q0 21 2.5 40.5T170-400Zm216 0h188q3-20 4.5-39.5T580-480q0-21-1.5-40.5T574-560H386q-3 20-4.5 39.5T380-480q0 21 1.5 40.5T386-400Zm268 0h136q5-20 7.5-39.5T800-480q0-21-2.5-40.5T790-560H654q3 20 4.5 39.5T660-480q0 21-1.5 40.5T654-400Z"/></svg> EN</button>
+    <button class="btn" id="reloadBtn"><svg viewBox="0 -960 960 960" width="15" height="15" fill="currentColor" aria-hidden="true"><path d="M480-160q-134 0-227-93t-93-227q0-134 93-227t227-93q69 0 132 28.5T720-690v-110h80v280H520v-80h168q-32-56-87.5-88T480-720q-100 0-170 70t-70 170q0 100 70 170t170 70q77 0 139-44t87-116h84q-28 106-114 173t-196 67Z"/></svg> <span data-i18n="reload">Muat ulang</span></button>
+    <button class="btn menu-btn" id="menuBtn"><svg viewBox="0 -960 960 960" width="15" height="15" fill="currentColor" aria-hidden="true"><path d="M480-160q-134 0-227-93t-93-227q0-134 93-227t227-93q69 0 132 28.5T720-690v-110h80v280H520v-80h168q-32-56-87.5-88T480-720q-100 0-170 70t-70 170q0 100 70 170t170 70q77 0 139-44t87-116h84q-28 106-114 173t-196 67Z"/></svg> <span data-i18n="menu">Menu</span></button>
+  </div>
+</header>
+
+<section class="hero" id="beranda">
+  <div class="hero-grid">
+    <div>
+      <span class="eyebrow" data-i18n="eyebrow">● API berbasis JSON</span>
+      <h1 data-i18n-html="heroTitle">Mesin database yang<br>bicara <em>JSON</em>, bukan SQL.</h1>
+      <p class="lead" data-i18n-html="heroLead">TeritipDB adalah mesin database yang menyimpan data ke penyimpan internalnya sendiri. Klien cukup mengirim JSON sederhana lewat HTTP — tanpa menulis SQL.</p>
+      <div class="badges">
+        <span class="badge">HTTP / JSON</span>
+        <span class="badge">Windows / WSL</span>
+        <span class="badge">Linux</span>
+        <span class="badge">macOS</span>
+        <span class="badge">VPS / Docker</span>
+      </div>
+    </div>
+    <div class="install-card">
+      <div class="lbl" data-i18n="installLbl">Install lewat npm</div>
+      <pre class="code"><code>npm create teritip-app@latest</code></pre>
+      <div class="lbl" style="margin-top:14px" data-i18n="runLbl">Buka menu</div>
+      <pre class="code"><code>teritip</code></pre>
+      <div class="flow" data-i18n="flow">Klien → (JSON/HTTP) → teritip-server → engine internal</div>
+    </div>
+  </div>
+</section>
+
+<section class="home" id="home">
+  <h2 data-i18n="homeTitle">Jelajahi dokumentasi</h2>
+  <p class="sub" data-i18n-html="homeSub">Pilih bagian di bawah ini. Menu <b>Sintaks</b> paling sering dipakai.</p>
+  <div class="home-cards">
+    <a class="home-card" href="#panduan">
+      <span class="h-ico"><svg viewBox="0 -960 960 960" width="18" height="18" fill="currentColor" aria-hidden="true"><path d="M560-564v-68q33-14 67.5-21t72.5-7q26 0 51 4t49 10v64q-24-9-48.5-13.5T700-600q-38 0-73 9.5T560-564Zm0 220v-68q33-14 67.5-21t72.5-7q26 0 51 4t49 10v64q-24-9-48.5-13.5T700-380q-38 0-73 9t-67 27Zm0-110v-68q33-14 67.5-21t72.5-7q26 0 51 4t49 10v64q-24-9-48.5-13.5T700-490q-38 0-73 9.5T560-454ZM260-320q47 0 91.5 10.5T440-278v-394q-41-24-87-36t-93-12q-36 0-71.5 7T120-692v396q35-12 69.5-18t70.5-6Zm260 42q44-21 88.5-31.5T700-320q36 0 70.5 6t69.5 18v-396q-33-14-68.5-21t-71.5-7q-47 0-93 12t-87 36v394Zm-40 118q-48-38-104-59t-116-21q-42 0-82.5 11T100-198q-21 11-40.5-1T40-234v-482q0-11 5.5-21T62-752q46-24 96-36t102-12q58 0 113.5 15T480-740q51-30 106.5-45T700-800q52 0 102 12t96 36q11 5 16.5 15t5.5 21v482q0 23-19.5 35t-40.5 1q-37-20-77.5-31T700-240q-60 0-116 21t-104 59Z"/></svg></span>
+      <h3><span data-i18n="navPanduan">Panduan</span><span class="pop" data-i18n="popular">populer</span></h3>
+      <p data-i18n="hcPanduan">Cara pasang dan pakai: npm, menu teritip, HTTP, dan klien.</p>
+    </a>
+    <a class="home-card" href="#ringkasan">
+      <span class="h-ico"><svg viewBox="0 -960 960 960" width="18" height="18" fill="currentColor" aria-hidden="true"><path d="M280-280h280v-80H280v80Zm0-160h400v-80H280v80Zm0-160h400v-80H280v80Zm-80 480q-33 0-56.5-23.5T120-200v-560q0-33 23.5-56.5T200-840h560q33 0 56.5 23.5T840-760v560q0 33-23.5 56.5T760-120H200Z"/></svg></span>
+      <h3 data-i18n="navRingkasan">Ringkasan</h3>
+      <p data-i18n="hcRingkasan">Pengantar TeritipDB, alur JSON ke engine, cara install, dan target yang didukung.</p>
+    </a>
+    <a class="home-card" href="#sintaks">
+      <span class="h-ico"><svg viewBox="0 -960 960 960" width="18" height="18" fill="currentColor" aria-hidden="true"><path d="M560-160v-80h120q17 0 28.5-11.5T720-280v-80q0-38 22-69t58-44v-14q-36-13-58-44t-22-69v-80q0-17-11.5-28.5T680-720H560v-80h120q50 0 85 35t35 85v80q0 17 11.5 28.5T840-560h40v160h-40q-17 0-28.5 11.5T800-360v80q0 50-35 85t-85 35H560Zm-280 0q-50 0-85-35t-35-85v-80q0-17-11.5-28.5T120-400H80v-160h40q17 0 28.5-11.5T160-600v-80q0-50 35-85t85-35h120v80H280q-17 0-28.5 11.5T240-680v80q0 38-22 69t-58 44v14q36 13 58 44t22 69v80q0 17 11.5 28.5T280-240h120v80H280Z"/></svg></span>
+      <h3 data-i18n="navSintaks">Sintaks</h3>
+      <p data-i18n="hcSintaks">Semua operasi JSON: insert, update, delete, select, join, tx, where, dan agregat.</p>
+    </a>
+    <a class="home-card" href="#server">
+      <span class="h-ico"><svg viewBox="0 -960 960 960" width="18" height="18" fill="currentColor" aria-hidden="true"><path d="M300-720q-25 0-42.5 17.5T240-660q0 25 17.5 42.5T300-600q25 0 42.5-17.5T360-660q0-25-17.5-42.5T300-720Zm0 400q-25 0-42.5 17.5T240-260q0 25 17.5 42.5T300-200q25 0 42.5-17.5T360-260q0-25-17.5-42.5T300-320ZM160-840h640q17 0 28.5 11.5T840-800v280q0 17-11.5 28.5T800-480H160q-17 0-28.5-11.5T120-520v-280q0-17 11.5-28.5T160-840Zm40 80v200h560v-200H200Zm-40 320h640q17 0 28.5 11.5T840-400v280q0 17-11.5 28.5T800-80H160q-17 0-28.5-11.5T120-120v-280q0-17 11.5-28.5T160-440Zm40 80v200h560v-200H200Z"/></svg></span>
+      <h3 data-i18n="navServer">Server &amp; Hosting</h3>
+      <p data-i18n="hcServer">Di mana TeritipDB bisa dijalankan: PC, VPS, Docker, panel — dan yang tidak bisa.</p>
+    </a>
+  </div>
+  <div class="home-facts">
+    <div class="home-fact"><b data-i18n="factJson">JSON</b><span data-i18n="factJsonSub">Klien kirim JSON, tanpa menulis SQL</span></div>
+    <div class="home-fact"><b data-i18n="factOne">1 perintah</b><span data-i18n-html="factOneSub"><code>npm create teritip-app@latest</code></span></div>
+    <div class="home-fact"><b data-i18n="factPort">Portabel</b><span data-i18n="factPortSub">Satu file data, semua OS</span></div>
+    <div class="home-fact"><b data-i18n="factSchema">Skema bebas</b><span data-i18n="factSchemaSub">Tabel &amp; kolom otomatis</span></div>
+  </div>
+</section>
+
+<section class="home" id="extra">
+  <h2 data-i18n="extraTitle">Alat &amp; bantuan</h2>
+  <p class="sub" data-i18n="extraSub">Bukan bagian inti dokumentasi — tetapi memudahkan.</p>
+  <div class="home-cards">
+    <a class="home-card" href="#ai">
+      <span class="h-ico"><svg viewBox="0 -960 960 960" width="18" height="18" fill="currentColor" aria-hidden="true"><path d="M160-360q-50 0-85-35t-35-85q0-50 35-85t85-35v-80q0-33 23.5-56.5T240-760h120q0-50 35-85t85-35q50 0 85 35t35 85h120q33 0 56.5 23.5T800-680v80q50 0 85 35t35 85q0 50-35 85t-85 35v160q0 33-23.5 56.5T720-120H240q-33 0-56.5-23.5T160-200v-160Zm242.5-97.5Q420-475 420-500t-17.5-42.5Q385-560 360-560t-42.5 17.5Q300-525 300-500t17.5 42.5Q335-440 360-440t42.5-17.5Zm240 0Q660-475 660-500t-17.5-42.5Q625-560 600-560t-42.5 17.5Q540-525 540-500t17.5 42.5Q575-440 600-440t42.5-17.5ZM320-280h320v-80H320v80Zm-80 80h480v-480H240v480Zm240-240Z"/></svg></span>
+      <h3 data-i18n="navAI">Pasang via AI</h3>
+      <p data-i18n="hcAI">Salin prompt, serahkan ke AI agent untuk memasang TeritipDB.</p>
+    </a>
+    <a class="home-card" href="#klien">
+      <span class="h-ico"><svg viewBox="0 -960 960 960" width="18" height="18" fill="currentColor" aria-hidden="true"><path d="M320-240 80-480l240-240 57 57-184 184 183 183-56 56Zm320 0-57-57 184-184-183-183 56-56 240 240-240 240Z"/></svg></span>
+      <h3 data-i18n="navKlien">Klien</h3>
+      <p data-i18n="hcKlien">Klien resmi untuk Python, JavaScript (Node), dan PHP.</p>
+    </a>
+    <a class="home-card" href="#dev">
+      <span class="h-ico"><svg viewBox="0 -960 960 960" width="18" height="18" fill="currentColor" aria-hidden="true"><path d="M160-160q-33 0-56.5-23.5T80-240v-480q0-33 23.5-56.5T160-800h640q33 0 56.5 23.5T880-720v480q0 33-23.5 56.5T800-160H160Zm0-80h640v-400H160v400Zm140-40-56-56 103-104-104-104 57-56 160 160-160 160Zm180 0v-80h240v80H480Z"/></svg></span>
+      <h3 data-i18n="navDev">Untuk Developer</h3>
+      <p data-i18n="hcDev">API HTTP, WebSocket, contoh curl, bangun UI sendiri.</p>
+    </a>
+  </div>
+</section>
+
+<div class="wrap" id="docsWrap">
+  <aside class="nav" id="nav">
+    <h4>Dokumentasi</h4>
+    <!-- diisi oleh app.js -->
+  </aside>
+  <main id="content">
+    <!-- dokumen di-render oleh app.js -->
+  </main>
+</div>
+
+<section class="benefits" id="benefits">
+  <h2 data-i18n="benefitTitle">Keuntungan memakai TeritipDB</h2>
+  <p class="sub" data-i18n="benefitSub">Sebagai pengguna, kamu dapat:</p>
+  <div class="benefit-grid" id="benefitGrid"></div>
+</section>
+
+<footer>
+  <div class="row">
+    <span data-i18n="footer">Dokumentasi TeritipDB.</span>
+    <span id="buildInfo"></span>
+  </div>
+</footer>
+
+<!-- ===================== SUMBER DOKUMEN (tersemat) ===================== -->
+
+<script type="text/markdown" id="md-readme">
+# TeritipDB
+
+**The database engine that speaks JSON, not SQL.**
+
+TeritipDB adalah mesin database — sederajat dengan MySQL/MariaDB/PostgreSQL —
+tetapi klien tidak menulis SQL. Klien cukup mengirim **JSON sederhana**.
+Di dalamnya, data disimpan ke penyimpan internalnya sendiri.
+
+```
+Klien  --(JSON via HTTP)-->  teritip-server  -->  engine internal
+```
+
+Ditulis dengan **C++**. Setiap database berjalan sebagai server sendiri
+dengan port sendiri.
+
+## Cara Install
+
+Prasyarat:
+
+- **Node.js 18+** (dengan `npm`) — untuk cara install lewat npm.
+- **`tar`** — sudah bawaan Windows 10+ & Linux.
+- **Compiler C++** (MSVC 2022 / gcc-clang) — hanya bila mau build aplikasi
+  pakai SDK.
+
+Cara termudah (lewat npm):
+
+```
+npm create teritip-app@latest
+```
+
+Unduh TeritipDB, pasang ke folder data pengguna, tambah ke PATH otomatis.
+Setelah selesai, buka terminal baru lalu ketik `teritip`.
+
+Atau dari paket rilis (manual): ekstrak paket rilis, lalu salin isi
+folder `bin/` ke folder yang ada di PATH.
+
+Panduan lengkap: [Panduan Pengguna](#panduan).
+
+## Cara Pakai (ringkas)
+
+```
+teritip      # buka menu
+```
+
+Di menu: buat database (port otomatis), lalu Start. Setelah itu kirim
+perintah dari terminal lain:
+
+```
+teritip-client '{"op":"insert","table":"users","data":{"name":"Budi","age":30}}' --port 7000
+teritip-client '{"op":"select","table":"users"}' --port 7000
+```
+
+## Pakai (menu `teritip`)
+
+`teritip` adalah pintu utama. Ia mengelola banyak database sekaligus —
+setiap database berjalan sebagai server sendiri dengan port sendiri.
+
+```
+teritip
+```
+
+```
+TERITIPDB
+(NXDOM) Nusantara eXtreme Development Object Model
+Version :v0.9.0
+===================================================
+  Master port: 7000  (global admin)  |  Derived ports: 7001+
+
+  (no databases yet)
+---------------------------------------------------
+  1. Create new database
+  2. Manage database (start/stop/delete)
+  3. Settings (base port)
+  4. Auto-start (ON)
+  5. For developers (API info)
+  6. Master server (global admin)
+  0. Exit
+---------------------------------------------------
+```
+
+- **1. Create new database** — buat database baru; port diberikan otomatis
+  (7000, 7001, ...).
+- **2. Manage database** — pilih database lalu Start / Stop / Delete.
+- **3. Settings** — ubah base port.
+
+Database disimpan sebagai file:
+
+- Windows: `%APPDATA%\TeritipDB\data\<nama>.db`
+- Linux:   `~/.local/share/TeritipDB/<nama>.db`
+
+Isolasi: satu database = satu server + satu port. Database berbeda berjalan
+bersamaan tanpa saling mengganggu.
+
+## Pakai klien
+
+```
+teritip-client '{"op":"insert","table":"users","data":{"name":"Budi","age":30}}' --port 7000
+teritip-client '{"op":"select","table":"users"}' --port 7000
+teritip-client '{"op":"select","table":"users","where":{"age":{">":20}}}' --port 7000
+```
+
+Opsi: `--host H` (default 127.0.0.1), `--port P` (default 7000).
+
+## Pakai lewat HTTP (Postman / aplikasi apa pun)
+
+```
+POST http://127.0.0.1:7000/query
+Content-Type: application/json
+
+{ "op": "select", "table": "users" }
+```
+
+Balasan:
+
+```json
+{"ok":true,"data":[{"id":1,"name":"Budi","age":30}],"meta":{"count":1}}
+```
+
+Cek hidup server:
+
+```
+GET http://127.0.0.1:7000/health
+```
+
+## Protokol
+
+- Protokol: **HTTP**.
+- `POST /query` — body JSON, balas JSON.
+- `GET /health` — status server.
+
+## Sintaks JSON
+
+Sintaks lengkap (insert, update, delete, select, join, tx, `where`, tipe
+data, format error) ada di [Sintaks](#sintaks).
+
+## Jalankan server langsung (tanpa menu)
+
+```
+teritip-server --port 7000 --db "D:\path\ke\data.db"
+```
+
+## SDK untuk developer C++
+
+Engine juga tersedia sebagai library yang bisa dipakai langsung dari C++
+(embedded, tanpa server):
+
+```cpp
+#include <teritip/Database.h>
+
+teritip::Database db;
+db.open("app.db");
+db.query(R"({"op":"insert","table":"users","data":{"name":"Budi"}})");
+auto res = db.query(R"({"op":"select","table":"users"})");
+```
+
+Paket SDK dirilis lewat GitHub Releases (repo `teritip-sdk`) dan dipakai
+dengan `find_package(teritip CONFIG REQUIRED)`.
+
+## Pasang lewat npm
+
+```
+npm create teritip-app@latest
+```
+
+Memasang TeritipDB (server + client) ke sistem dan menambahkannya ke PATH.
+
+## Target yang Didukung
+
+Semua mesin yang punya terminal dan boleh menjalankan proses: PC biasa
+(Windows/Linux/macOS), WSL, VPS, Docker, panel berbasis VPS, Windows Server.
+Rincian: [Server & Hosting](#server).
+</script>
+
+<script type="text/markdown" id="md-sintaks">
+# TeritipDB - Sintaks Operasi (Gaya JSON)
+
+Dokumen ini menjelaskan sintaks operasi TeritipDB. Klien cukup mengirim
+JSON, tanpa menulis SQL. Server TeritipDB (C++) menerjemahkannya menjadi
+operasi engine.
+
+## 1. Membuat Database
+
+Database dibuat lewat menu `teritip` (terminal): **Create new database**.
+Satu database = satu file `.db` + satu server dengan port sendiri.
+Setiap database punya **token** (awalan `nx_`) untuk autentikasi.
+
+### Konsep port: induk dan turunan
+
+- **Port induk** (default **7000**) = server **global admin**. Melayani
+  API manajemen: lihat/buat/hapus semua database (lihat bagian 1d).
+  Dijalankan lewat menu `teritip` -> **Master server**.
+- **Port turunan** (default **7001, 7002, ...**) = server **per proyek**.
+  Tiap database punya port sendiri, terisolasi. Dijalankan lewat menu
+  `teritip` -> **Manage database** -> Start.
+
+Jadi: induk (7000) untuk mengelola semuanya, turunan (7001+) untuk kerja
+per-proyek.
+
+Lokasi file:
+
+- Windows: `%APPDATA%\TeritipDB\data\<nama>.db`
+- Linux:   `~/.local/share/TeritipDB/<nama>.db`
+
+## 1b. Autentikasi (Token)
+
+Bila server dijalankan dengan token, setiap perintah `POST` **wajib**
+menyertakan token di header:
+
+```
+Authorization: Bearer nx_...
+```
+
+Tanpa token / token salah, server menjawab `401` dengan
+`{"ok":false,"meta":{"error":"unauthorized",...}}`. Bila token kedaluwarsa:
+`{"error":"token_expired"}`.
+
+Token dikelola lewat menu `teritip` (opsi **Token**): lihat, regenerate,
+atur masa berlaku (dalam hari atau tanpa kedaluwarsa).
+
+## 1e. Hak Akses per-User (Role)
+
+Selain token bawaan server, satu database bisa punya banyak **user**,
+masing-masing dengan **token sendiri** dan **peran (role)**. Berguna bila
+anda ingin memberi akses terbatas (mis. token hanya-baca untuk aplikasi
+publik).
+
+### Peran (role)
+
+| Role | Boleh menjalankan |
+|---|---|
+| `read` | `select`, `show_tables`, `export`, `logs`, `join`, `list_files`, `get_file` |
+| `write` | semua `read` + `insert`, `update`, `delete`, `import`, `create_index`, `upload`, `delete_file` |
+| `admin` | **semua** (termasuk `create_table`, `drop_table`, `tx`, kelola user) |
+
+- Token bawaan server (`--token`) selalu berperan **admin**.
+- Token user disimpan **ter-hash** (SHA-256); token mentah hanya
+  ditampilkan **sekali** saat `create_user`.
+- Bila role tidak diizinkan, server menjawab `403` dengan
+  `{"error":"forbidden"}`.
+
+### Buat user
+
+```json
+{ "op": "create_user", "name": "budi", "role": "write" }
+```
+
+Balikan (simpan `token` — tidak akan ditampilkan lagi):
+
+```json
+{ "ok": true, "data": [ { "name": "budi", "role": "write", "token": "nx_3f9a..." } ] }
+```
+
+Role default bila tidak diisi: `admin`.
+
+### Lihat / ubah / hapus user
+
+```json
+{ "op": "list_users" }
+{ "op": "set_role", "name": "budi", "role": "read" }
+{ "op": "drop_user", "name": "budi" }
+```
+
+## 1f. Proteksi Brute-Force (Rate Limit)
+
+Server melindungi token dari percobaan tebak-tebakan:
+
+- **10 percobaan gagal dalam 1 menit** dari satu IP → IP itu **diblokir 5 menit**.
+- Selama diblokir, semua `POST` dari IP itu dijawab `429` dengan
+  `{"error":"too_many_attempts"}`.
+- Percobaan **sukses** mereset hitungan (user sah tidak dihukum).
+
+## 1c. Endpoint HTTP
+
+- `POST /` dan `POST /query` — kirim perintah JSON.
+- `GET /health` — cek server hidup (tanpa token).
+- `GET /ws` — WebSocket untuk notifikasi realtime (lihat bagian 15).
+
+## 1d. Manajemen Database (Server Induk)
+
+Dijalankan pada **server induk** (port default 7000). Dipakai untuk
+mengelola seluruh database (mis. oleh web admin buatan developer).
+
+### Lihat semua database
+
+```json
+{ "op": "list_databases" }
+```
+
+Balikan:
+
+```json
+{ "ok": true,
+  "data": [
+    { "name": "toko", "file": "C:\\...\\data\\toko.db", "size": 8192 },
+    { "name": "sekolah", "file": "C:\\...\\data\\sekolah.db", "size": 4096 }
+  ],
+  "meta": { "count": 2 } }
+```
+
+### Buat database
+
+```json
+{ "op": "create_database", "name": "toko" }
+```
+
+Membuat file `<nama>.db` di folder data. Server turunannya dijalankan
+terpisah (lewat menu `teritip`).
+
+### Hapus database
+
+```json
+{ "op": "drop_database", "name": "toko" }
+```
+
+**Peringatan:** menghapus file database beserta isinya.
+
+## 2. Membuat Tabel dan Kolom (Mode Bebas / NoSQL)
+
+TeritipDB memakai mode bebas: klien tidak perlu mendefinisikan tabel lebih
+dulu. **Cukup kirim insert, dan tabel + kolom otomatis dibuat** bila belum
+ada (schema-less).
+
+### Tabel dibuat otomatis saat insert
+
+```json
+{ "op": "insert", "table": "buku", "data": { "judul": "Laskar Pelangi", "tahun": 2005 } }
+```
+
+Jika tabel `buku` belum ada, TeritipDB otomatis menjalankan (di balik
+layar):
+
+```sql
+CREATE TABLE IF NOT EXISTS buku (id INTEGER PRIMARY KEY AUTOINCREMENT);
+ALTER TABLE buku ADD COLUMN judul TEXT;
+ALTER TABLE buku ADD COLUMN tahun INTEGER;
+INSERT INTO buku (judul, tahun) VALUES (?, ?);
+```
+
+### Kolom baru otomatis ditambahkan
+
+Insert berikutnya dengan kolom baru akan menambah kolom tersebut:
+
+```json
+{ "op": "insert", "table": "buku", "data": { "judul": "Bumi Manusia", "penulis": "Pramoedya" } }
+```
+
+Kolom `penulis` otomatis dibuat karena belum ada. Kolom `tahun` yang tidak
+dikirim diisi NULL.
+
+### Boleh membuat tabel secara eksplisit (opsional)
+
+Klien boleh membuat tabel kosong lebih dulu bila ingin mengontrol struktur:
+
+```json
+{ "op": "create_table", "table": "buku" }
+```
+
+Karena tipe kolom ditentukan otomatis dari data, `create_table` hanya
+membuat tabel kosong dengan kolom `id`. Kolom lain menyusul saat insert
+pertama.
+
+### Validasi tipe kolom (opsional)
+
+Bila ingin kolom bertipe tegas, deklarasikan tipe saat `create_table`.
+Kolom `id` **selalu otomatis** (integer, auto-increment) dan tidak perlu
+dideklarasikan.
+
+```json
+{ "op": "create_table", "table": "produk",
+  "columns": { "nama": "text", "harga": "integer", "berat": "real" } }
+```
+
+Tipe yang dikenal (saling setara):
+
+- `integer` / `int` / `bool`
+- `real` / `float` / `double` / `number`
+- `text` / `string` / `varchar`
+
+Setelah dideklarasikan, `insert`/`update`/`import` yang mengirim nilai
+dengan tipe **tidak cocok** akan ditolak dengan error `type_mismatch`:
+
+```json
+{ "op": "insert", "table": "produk", "data": { "nama": "Kopi", "harga": "mahal" } }
+```
+
+```json
+{ "ok": false, "meta": { "error": "type_mismatch", "message": "kolom 'harga' bertipe integer tetapi nilai pada baris 1 bukan tipe itu" } }
+```
+
+- `NULL` selalu diterima untuk kolom apa pun.
+- Kolom yang **tidak** dideklarasikan (mode bebas) tetap menerima apa pun.
+
+### Aturan mode bebas
+
+- Nama tabel dan kolom harus berupa identifier aman: huruf, angka,
+  underscore, tidak boleh diawali angka, dan tidak boleh berisi spasi.
+- Tabel bawaan sistem (`schema_migrations`, `internal_*`) tidak boleh
+  ditimpa klien.
+- Tipe kolom ditentukan dari nilai JSON pertama yang masuk; nilai
+  berikutnya dicoba dikonversi ke tipe tersebut.
+
+## 3. Bentuk Umum
+
+Request:
+
+```json
+{ "op": "<insert|update|delete|select|join|tx|create_table|show_tables|create_index|drop_table|export|import|list_databases|create_database|drop_database|create_user|list_users|drop_user|set_role|upload|list_files|get_file|delete_file|logs>",
+  "table": "<nama>", ... }
+```
+
+Response:
+
+```json
+{ "ok": true, "data": [], "meta": { "count": 0 } }
+```
+
+- `ok` (boolean): berhasil atau gagal.
+- `data` (array/object): hasil operasi select/join.
+- `meta`: informasi tambahan (jumlah baris, id baru, dsb). Untuk error,
+  `meta` berisi `error` dan `message`.
+
+## 4. Insert
+
+```json
+{ "op": "insert", "table": "users", "data": { "nama": "Budi", "umur": 30 } }
+```
+
+Menjadi: `INSERT INTO users (nama, umur) VALUES (?, ?);`
+
+Balikan (data yang disimpan **selalu** dikembalikan):
+
+```json
+{ "ok": true,
+  "data": [ { "id": 1, "nama": "Budi", "umur": 30 } ],
+  "meta": { "lastInsertId": 1, "returned": 1, "rowsAffected": 1 } }
+```
+
+- Kolom `id` tidak perlu dikirim; diisi otomatis (auto-increment).
+- Hasil insert langsung berisi datanya, jadi **tidak perlu select lagi**.
+- Bila tidak ingin mengembalikan data, kirim `"return": false`:
+
+```json
+{ "op": "insert", "table": "users", "data": { "nama": "Budi" }, "return": false }
+```
+
+```json
+{ "ok": true, "data": [], "meta": { "lastInsertId": 2, "rowsAffected": 1 } }
+```
+
+### Insert banyak (bulk)
+
+```json
+{ "op": "insert", "table": "users", "data": [ { "nama": "Budi" }, { "nama": "Siti" } ] }
+```
+
+Menjadi:
+
+```sql
+INSERT INTO users (nama) VALUES (?), (?);
+```
+
+Balikan:
+
+```json
+{ "ok": true,
+  "data": [ { "id": 1, "nama": "Budi" }, { "id": 2, "nama": "Siti" } ],
+  "meta": { "lastInsertId": 2, "returned": 2, "rowsAffected": 2 } }
+```
+
+## 5. Update
+
+```json
+{ "op": "update", "table": "users", "where": { "id": 1 }, "data": { "umur": 31 } }
+```
+
+Menjadi: `UPDATE users SET umur = ? WHERE id = ?;`
+
+Balikan (baris yang diperbarui selalu dikembalikan):
+
+```json
+{ "ok": true,
+  "data": [ { "id": 1, "nama": "Budi", "umur": 31 } ],
+  "meta": { "returned": 1, "rowsAffected": 1 } }
+```
+
+Kirim `"return": false` bila tidak ingin data dikembalikan.
+
+**Penting:** `update` tanpa `where` akan ditolak, supaya tidak mengubah
+seluruh isi tabel secara tidak sengaja. Untuk sengaja mengubah semua
+baris, wajib pakai flag eksplisit: `"all": true`.
+
+## 6. Delete
+
+```json
+{ "op": "delete", "table": "users", "where": { "id": 1 } }
+```
+
+Menjadi: `DELETE FROM users WHERE id = ?;`
+
+Balikan:
+
+```json
+{ "ok": true, "meta": { "deleted": 1 } }
+```
+
+**Penting:** `delete` tanpa `where` juga ditolak, dengan aturan flag
+`"all": true` yang sama seperti `update`.
+
+## 7. Select
+
+```json
+{ "op": "select", "table": "users", "select": ["id", "nama"], "where": { "umur": { ">": 20 } }, "limit": 10, "offset": 0 }
+```
+
+Menjadi: `SELECT id, nama FROM users WHERE umur > ? LIMIT ? OFFSET ?;`
+
+- `select` boleh berisi daftar kolom; bila tidak diisi, default `*`.
+- `offset` dipakai untuk pagination bersama `limit`.
+
+Balikan:
+
+```json
+{
+  "ok": true,
+  "data": [ { "id": 1, "nama": "Budi" } ],
+  "meta": { "count": 1, "limit": 10, "offset": 0 }
+}
+```
+
+### 7.1 Pagination (untuk data besar / browser)
+
+Ada **dua cara** pagination. Pilih sesuai ukuran data.
+
+**a. Offset (sederhana, cocok data kecil-menengah)**
+
+```json
+{ "op": "select", "table": "users",
+  "select": ["id", "nama"],
+  "order": [ { "column": "id", "dir": "asc" } ],
+  "limit": 25, "offset": 50 }
+```
+
+`offset: 50` = lewati 50 baris (halaman ke-3 bila `limit` 25).
+Kelemahan: pada juta data, `offset` besar lambat (mesin harus melewati
+banyak baris).
+
+**b. Cursor (cepat, WAJIB untuk data besar)**
+
+Ambil halaman pertama dengan `limit`; balikannya menyertakan
+`meta.hasMore` dan `meta.next` (nilai kunci baris terakhir). Halaman
+berikutnya pakai `after`:
+
+```json
+{ "op": "select", "table": "users",
+  "select": ["id", "nama"],
+  "order": [ { "column": "id", "dir": "asc" } ],
+  "limit": 25 }
+```
+
+```json
+{ "ok": true,
+  "data": [ { "id": 1, "nama": "Budi" } ],
+  "meta": { "hasMore": true, "next": { "id": 25 } } }
+```
+
+Halaman berikutnya:
+
+```json
+{ "op": "select", "table": "users",
+  "select": ["id", "nama"],
+  "order": [ { "column": "id", "dir": "asc" } ],
+  "limit": 25, "after": { "id": 25 } }
+```
+
+- `after: { "id": 25 }` → ambil baris dengan `id > 25` (atau `<` bila
+  order `desc`). Kolom `after` **harus sama** dengan kolom `order`.
+- `meta.hasMore`: `true` bila masih ada halaman berikutnya.
+- `meta.next`: cursor untuk halaman berikutnya (nilai kolom order pada
+  baris terakhir). Kolom ini otomatis disertakan walau tidak ada di
+  `select`.
+- `meta.total`: jumlah total baris — hanya diisi bila minta
+  `"countTotal": true` (mahal pada data besar, jadi opsional).
+
+Contoh pola di browser (JavaScript):
+
+```js
+async function halaman(cursor) {
+  const req = { op: "select", table: "users",
+                select: ["id", "nama"],
+                order: [{ column: "id", dir: "asc" }],
+                limit: 25 };
+  if (cursor) req.after = cursor;
+  const res = await fetch("http://127.0.0.1:7001/", {
+    method: "POST",
+    headers: { "Content-Type": "application/json",
+               "Authorization": "Bearer nx_..." },
+    body: JSON.stringify(req)
+  }).then(r => r.json());
+  render(res.data);                              // tampilkan 25 baris
+  tombolNext(res.meta.hasMore, res.meta.next);   // tombol "Next"
+}
+```
+
+**Catatan penting:** saat pakai pagination, **selalu** sertakan `order`
+(biasanya `id asc`). Tanpa `order`, urutan baris tidak dijamin sehingga
+baris bisa terlewat atau tampil ganda antar halaman.
+
+## 8. Format `where` (Filter)
+
+`where` mendukung operator perbandingan, logika, dan kondisi khusus.
+
+### Operator perbandingan
+
+```json
+{ "op": "select", "table": "users", "where": { "umur": { ">": 20 } } }
+```
+
+```sql
+SELECT * FROM users WHERE umur > ?;
+```
+
+Operator yang diizinkan: `=`, `!=`, `>`, `>=`, `<`, `<=`.
+
+### IN
+
+```json
+{ "op": "select", "table": "users", "where": { "kota": { "in": ["Jakarta", "Bandung"] } } }
+```
+
+```sql
+SELECT * FROM users WHERE kota IN (?, ?);
+```
+
+### LIKE (pencarian teks)
+
+```json
+{ "op": "select", "table": "users", "where": { "nama": { "like": "%bud%" } } }
+```
+
+```sql
+SELECT * FROM users WHERE nama LIKE ?;
+```
+
+### NULL
+
+```json
+{ "op": "select", "table": "users", "where": { "email": null } }
+```
+
+```sql
+SELECT * FROM users WHERE email IS NULL;
+```
+
+Untuk bukan null: `{ "email": { "not": null } }` -> `IS NOT NULL`.
+
+### AND / OR / NOT dan pengelompokan
+
+Kondisi bertingkat ditulis dengan key `and`, `or`, `not`:
+
+```json
+{
+  "op": "select",
+  "table": "users",
+  "where": {
+    "and": [
+      { "kota": "Jakarta" },
+      { "or": [ { "umur": { ">": 30 } }, { "vip": true } ] }
+    ]
+  }
+}
+```
+
+```sql
+SELECT * FROM users WHERE kota = ? AND (umur > ? OR vip = ?);
+```
+
+- `and` / `or` berisi array kondisi.
+- `not` membalik satu kondisi.
+- Gabungan `and`/`or` otomatis diberi tanda kurung agar urutan logika benar.
+
+## 9. JOIN
+
+Karena JOIN menggabungkan lebih dari satu tabel, operasinya pakai
+`op: "join"` dengan daftar `joins[]` dan kondisi `on`.
+
+```json
+{
+  "op": "join",
+  "table": "users",
+  "joins": [
+    { "type": "left", "table": "orders", "on": { "users.id": "orders.user_id" } }
+  ],
+  "select": ["users.nama", "orders.total"],
+  "where": { "orders.total": { ">": 100 } },
+  "limit": 20
+}
+```
+
+Menjadi:
+
+```sql
+SELECT users.nama, orders.total
+FROM users
+LEFT JOIN orders ON users.id = orders.user_id
+WHERE orders.total > ?
+LIMIT ?;
+```
+
+Nilai `type` yang diizinkan: `inner`, `left`, `right`, `full`.
+
+Balikan berisi baris hasil gabungan. Bila ingin hasil bersarang (nested),
+gunakan blok `nest`:
+
+```json
+{
+  "op": "join",
+  "table": "users",
+  "joins": [ { "type": "left", "table": "orders", "on": { "users.id": "orders.user_id" } } ],
+  "select": ["users.id", "users.nama", "orders.total"],
+  "nest": { "children": "orders", "on": "users.id" }
+}
+```
+
+Balikan:
+
+```json
+{
+  "ok": true,
+  "data": [
+    { "id": 1, "nama": "Budi", "orders": [ { "total": 150 } ] }
+  ]
+}
+```
+
+## 10. ORDER BY
+
+```json
+{ "op": "select", "table": "users", "order": [ { "column": "name", "dir": "asc" } ] }
+```
+
+Menjadi: `SELECT * FROM users ORDER BY name ASC;`
+
+Catatan: key `column` disediakan (global). Key lama `kolom` tetap diterima
+untuk kompatibilitas.
+
+## 11. GROUP BY + Agregat
+
+Agregat ditulis sebagai item di `select` dengan bentuk
+`{ "<agregat>": "<kolom>", "as": "<alias>" }`. Agregat yang didukung:
+`count`, `sum`, `avg`, `min`, `max`.
+
+### COUNT
+
+```json
+{
+  "op": "select",
+  "table": "orders",
+  "select": [ "user_id", { "count": "*", "as": "jumlah" } ],
+  "group": ["user_id"]
+}
+```
+
+Menjadi:
+
+```sql
+SELECT user_id, COUNT(*) AS jumlah
+FROM orders
+GROUP BY user_id;
+```
+
+### SUM
+
+```json
+{
+  "op": "select",
+  "table": "orders",
+  "select": [ "user_id", { "sum": "total", "as": "omzet" } ],
+  "group": ["user_id"]
+}
+```
+
+Menjadi:
+
+```sql
+SELECT user_id, SUM(total) AS omzet
+FROM orders
+GROUP BY user_id;
+```
+
+### AVG / MIN / MAX
+
+```json
+{
+  "op": "select",
+  "table": "orders",
+  "select": [
+    { "avg": "total", "as": "rata" },
+    { "min": "total", "as": "terkecil" },
+    { "max": "total", "as": "terbesar" }
+  ]
+}
+```
+
+Tanpa `group`, agregat menghitung seluruh tabel. Boleh digabung dengan
+`where` untuk membatasi baris yang dihitung.
+
+### 11.1 HAVING (menyaring hasil grup)
+
+`having` menyaring **setelah** pengelompokan (mis. hanya grup dengan jumlah
+tertentu). Hanya boleh dipakai bersama `group`.
+
+```json
+{
+  "op": "select",
+  "table": "orders",
+  "select": [ "user_id", { "count": "*", "as": "n" } ],
+  "group": ["user_id"],
+  "having": { "n": { ">": 5 } }
+}
+```
+
+Menjadi:
+
+```sql
+SELECT user_id, COUNT(*) AS n
+FROM orders
+GROUP BY user_id
+HAVING n > 5;
+```
+
+Aturan `having` sama seperti `where` (operator `= != > >= < <=`, `in`, `like`,
+`null`, `and`/`or`/`not`), tetapi di sini yang dibandingkan adalah **kolom
+hasil agregat** (mis. alias `n`, `total`).
+
+Catatan:
+
+- `having` tanpa `group` -> error `validation_failed`.
+- `after` (cursor) tidak bisa dipakai bersama `group` (hasil agregat bukan
+  deretan baris) -> error `validation_failed`.
+- Nama kolom pada `group` divalidasi; nama tidak sah -> error `invalid_column`.
+
+## 12. Transaction
+
+Semua operasi di dalam `ops` dijalankan all-or-nothing. Bila satu gagal,
+semuanya dibatalkan.
+
+```json
+{
+  "op": "tx",
+  "ops": [
+    { "op": "update", "table": "users", "where": { "id": 1 }, "data": { "saldo": -100 } },
+    { "op": "update", "table": "users", "where": { "id": 2 }, "data": { "saldo": 100 } }
+  ]
+}
+```
+
+Balikan:
+
+```json
+{ "ok": true, "meta": { "applied": 2 } }
+```
+
+- `tx` hanya boleh berisi operasi `insert`, `update`, dan `delete` (operasi
+  yang mengubah data). `select`/`join` tidak diizinkan di dalam `tx`.
+- `tx` tidak boleh bersarang (tidak ada `tx` di dalam `tx`).
+
+## 13. Tipe Data dan Nilai Khusus
+
+- **Angka:** JSON number -> INTEGER/REAL di engine internal.
+- **Teks:** JSON string -> TEXT (UTF-8).
+- **Boolean:** JSON `true`/`false` -> disimpan sebagai INTEGER `1`/`0`
+  (engine tidak punya tipe boolean).
+- **Tanggal/waktu:** kirim sebagai string ISO 8601, mis.
+  `"2026-10-09T14:30:00Z"`, disimpan sebagai TEXT.
+- **NULL:** kirim JSON `null` -> disimpan sebagai SQL NULL.
+- **Kolom tidak dikirim:** pada `insert`, kolom yang tidak ada di `data`
+  diisi default/NULL (atau gagal bila kolom `NOT NULL` tanpa default).
+
+## 14. Kelola Tabel dan Index
+
+### Lihat daftar tabel + kolom
+
+```json
+{ "op": "show_tables" }
+```
+
+Balikan:
+
+```json
+{ "ok": true,
+  "data": [
+    { "table": "users", "columns": ["id", "nama", "umur"] },
+    { "table": "orders", "columns": ["id", "user_id", "total"] }
+  ],
+  "meta": { "count": 2 } }
+```
+
+### Buat tabel kosong (eksplisit)
+
+```json
+{ "op": "create_table", "table": "users" }
+```
+
+### Buat index (percepat pencarian)
+
+```json
+{ "op": "create_index", "table": "users", "columns": ["nama"] }
+```
+
+Boleh beberapa kolom, dan boleh unik:
+
+```json
+{ "op": "create_index", "table": "users", "columns": ["nama", "umur"], "unique": true }
+```
+
+Nama index dibuat otomatis (mis. `idx_users_nama`), atau tentukan sendiri
+lewat `"name": "..."`.
+
+### Hapus tabel
+
+```json
+{ "op": "drop_table", "table": "users" }
+```
+
+**Peringatan:** menghapus seluruh tabel beserta isinya.
+
+### Export data tabel
+
+```json
+{ "op": "export", "table": "users" }
+```
+
+Balikan: seluruh baris tabel.
+
+```json
+{ "ok": true,
+  "data": [ { "id": 1, "nama": "Budi" }, { "id": 2, "nama": "Siti" } ],
+  "meta": { "count": 2 } }
+```
+
+### Import data tabel
+
+```json
+{ "op": "import", "table": "users",
+  "data": [ { "nama": "Budi", "umur": 30 }, { "nama": "Siti", "umur": 25 } ] }
+```
+
+Opsi `mode`:
+
+- `"append"` (default) — tambahkan ke data yang ada.
+- `"replace"` — hapus isi tabel dulu, lalu isi dengan data baru.
+
+```json
+{ "op": "import", "table": "users", "mode": "replace", "data": [ { "nama": "X" } ] }
+```
+
+Import berjalan dalam satu transaksi: bila satu baris gagal, semua dibatalkan.
+
+## 14b. Upload File (Gambar / Dokumen)
+
+TeritipDB bisa menyimpan **file** (gambar, PDF, dokumen). File asli
+disimpan sebagai berkas di folder `files/` **di samping file database**,
+sedangkan metadatanya dicatat di tabel sistem. Jadi database tetap ringan
+(tidak menyimpan isi file), tapi pencarian file mudah.
+
+### Kirim file (upload)
+
+Isi file dikirim sebagai **base64**:
+
+```json
+{ "op": "upload", "name": "ktp.jpg", "mime": "image/jpeg", "data": "<base64>" }
+```
+
+Balikan:
+
+```json
+{ "ok": true,
+  "data": [ { "id": "a50c6c7601972505", "name": "ktp.jpg",
+              "mime": "image/jpeg", "path": "files/a50c6c7601972505_ktp.jpg",
+              "size": 20480 } ] }
+```
+
+- `id` dipakai untuk merujuk file ini (simpan di kolom tabel Anda, mis.
+  `"foto": "a50c6c7601972505"`).
+- `data` boleh berisi prefix data-URL (`data:image/png;base64,...`) — otomatis
+  dibersihkan. `mime` ikut terisi dari prefix bila tidak diberikan.
+- Nama file otomatis **diamankan** (path seperti `../../` dibuang).
+- Batas ukuran default **25 MB** (bisa diatur lewat `"maxSize"` dalam byte).
+
+### Daftar file
+
+```json
+{ "op": "list_files" }
+```
+
+Balikan: daftar `{ id, name, mime, path, size, at }`.
+
+### Ambil isi file (download)
+
+```json
+{ "op": "get_file", "id": "a50c6c7601972505" }
+```
+
+Balikan menyertakan `data` berisi file dalam **base64** (untuk disimpan atau
+dikirim ulang ke browser).
+
+### Hapus file
+
+```json
+{ "op": "delete_file", "id": "a50c6c7601972505" }
+```
+
+Menghapus berkas fisik **dan** catatannya.
+
+### Contoh (JavaScript di browser)
+
+```js
+const file = inputFile.files[0];
+const b64 = await new Promise(r => {
+  const fr = new FileReader();
+  fr.onload = () => r(fr.result.split(",")[1]);  // buang prefix
+  fr.readAsDataURL(file);
+});
+await fetch("http://127.0.0.1:7001/", {
+  method: "POST",
+  headers: { "Content-Type": "application/json", "Authorization": "Bearer nx_..." },
+  body: JSON.stringify({ op: "upload", name: file.name, data: b64 })
+});
+```
+
+**Catatan:** saat **backup**, salin juga folder `files/` — kalau tidak,
+metadata ada tapi berkas fisiknya hilang.
+
+## 15. Realtime (Notifikasi Perubahan)
+
+Server menyediakan WebSocket di `ws://<host>:<port>/ws?token=<token>`.
+Klien berlangganan ke sebuah tabel, lalu menerima notifikasi **berisi
+datanya** setiap kali tabel itu berubah (insert/update/delete) — tanpa
+perlu refresh.
+
+### Berlangganan
+
+Kirim setelah terhubung:
+
+```json
+{ "subscribe": "users" }
+```
+
+Server membalas:
+
+```json
+{ "type": "subscribed", "table": "users" }
+```
+
+### Notifikasi yang diterima
+
+```json
+{ "type": "change", "op": "insert", "table": "users",
+  "result": { "ok": true,
+              "data": [ { "id": 1, "nama": "Budi" } ],
+              "meta": { "lastInsertId": 1, "returned": 1, "rowsAffected": 1 } } }
+```
+
+### Berhenti berlangganan
+
+```json
+{ "unsubscribe": "users" }
+```
+
+### Alat resmi
+
+```
+teritip-watch users --port 7000 --token nx_...
+```
+
+## 16. Kasus yang Sengaja Tidak Di-JSON-kan
+
+- Subquery dan window function sebaiknya tidak dipaksa masuk JSON. Untuk
+  kasus ini, sediakan endpoint SQL terbatas yang hanya bisa diakses
+  admin/internal, bukan klien umum.
+
+## 16b. Log Aktivitas
+
+Semua operasi yang mengubah data (insert, update, delete, import,
+drop_table) dicatat otomatis ke tabel internal `teritip_log`.
+
+Baca log:
+
+```json
+{ "op": "logs", "limit": 50 }
+```
+
+Balikan (terbaru di atas):
+
+```json
+{ "ok": true,
+  "data": [
+    { "id": 3, "at": "2026-10-10 10:15:05", "op": "delete", "tbl": "users", "rows": 1 },
+    { "id": 2, "at": "2026-10-10 10:15:01", "op": "insert", "tbl": "users", "rows": 2 }
+  ],
+  "meta": { "count": 2 } }
+```
+
+Tabel `teritip_log` adalah tabel sistem — tidak muncul di `show_tables`.
+
+## 17. Format Error
+
+Bila operasi gagal, balikannya:
+
+```json
+{ "ok": false, "meta": { "error": "invalid_table", "message": "Tabel 'foo' tidak diizinkan" } }
+```
+
+Kode error yang disarankan:
+
+- `invalid_table` - nama tabel tidak ada di whitelist.
+- `invalid_column` - nama kolom tidak ada di whitelist.
+- `invalid_operator` - operator tidak diizinkan.
+- `validation_failed` - tipe/format nilai salah.
+- `where_required` - `update`/`delete` tanpa `where` dan tanpa `all: true`.
+- `not_found` - endpoint/data yang dituju tidak ada.
+- `unauthorized` - token tidak ada / salah.
+- `token_expired` - token sudah kedaluwarsa.
+- `forbidden` - role user tidak diizinkan menjalankan op tersebut.
+- `too_many_attempts` - terlalu banyak percobaan gagal dari IP ini (rate limit).
+- `type_mismatch` - nilai tidak cocok dengan tipe kolom yang dideklarasikan.
+- `already_exists` - user sudah ada.
+- `invalid_user` - nama user tidak valid.
+- `invalid_type` - tipe kolom tidak dikenal saat `create_table`.
+- `invalid_base64` - isi file upload bukan base64 yang sah.
+- `file_too_large` - ukuran file upload melebihi batas.
+- `io_error` - gagal menulis/membaca file di disk.
+- `sql_error` - kegagalan di lapisan engine.
+
+### 17.1 Saran Perbaikan (`hint`)
+
+Bila tersedia, balikan error menyertakan `hint` — saran singkat (bahasa
+Inggris) untuk memperbaiki masalah, berguna bagi pemula:
+
+```json
+{ "ok": false, "meta": {
+  "error": "type_mismatch",
+  "message": "kolom 'harga' bertipe integer tetapi nilai pada baris 1 bukan tipe itu",
+  "hint": "use type integer for column 'harga', or change the type in create_table"
+} }
+```
+
+`hint` ada pada error umum: `type_mismatch`, `where_required`, `invalid_table`,
+field wajib (`validation_failed`), `unauthorized`, `forbidden`,
+`token_expired`, dan `too_many_attempts`.
+
+## 18. Aturan Keamanan Penerjemah JSON -> SQL
+
+Karena TeritipDB memakai mode bebas (tabel/kolom dibuat klien), whitelist
+tabel dan kolom tidak berlaku. Sebagai gantinya:
+
+- **Validasi identifier** nama tabel dan kolom: hanya huruf, angka, dan
+  underscore, tidak diawali angka, panjang terbatas. Tolak nama lain.
+- **Selalu parameter binding** (`?`) untuk semua nilai. Nama tabel/kolom
+  yang sudah lolos validasi identifier dirangkai, bukan nilai pengguna.
+- **Validasi tipe** sebelum menyimpan (angka, teks, tanggal).
+- **Whitelist operator** `where` (hanya izinkan `=, !=, >, >=, <, <=, in,
+  like, not`).
+- **Whitelist jenis JOIN** (`inner, left, right, full`) dan pasangan kolom `on`.
+- **Tolak `update`/`delete` tanpa `where`** kecuali diberi flag `all: true`.
+- **Lindungi tabel sistem** (`schema_migrations`, `internal_*`) agar tidak
+  boleh dibuat/diubah klien.
+
+## 19. Penulisan Bersamaan (Concurrency)
+
+TeritipDB memakai engine dengan mode WAL. Engine mengizinkan **satu penulis
+dalam satu waktu**, banyak pembaca bersamaan. Untuk mencegah tulis gagal
+saat ramai:
+
+- Setiap operasi tulis yang bertemu kunci akan **dicoba ulang** otomatis
+  (retry) sampai kunci tersedia — tidak langsung gagal.
+- Pembuatan tabel/kolom otomatis bersifat **idempoten** (`CREATE TABLE IF
+  NOT EXISTS`, `ADD COLUMN` yang menoleransi duplikat), sehingga banyak
+  penulis pertama yang datang bersamaan tetap aman.
+
+Hasil uji lokal: **2000 tulis paralel (200 koneksi) = 0 gagal**.
+
+Catatan jujur: yang dibatasi adalah **kecepatan** (ratusan tulis/detik),
+bukan integritas. Untuk 1000 pengguna yang menulis **tersebar** — aman.
+Untuk lonjakan ribuan tulis **pada saat yang sama** — akan mengantre
+(tidak hilang, tapi lebih lambat). Jika butuh tulis masif berkelanjutan,
+itu di luar jangkauan engine ini.
+
+### 19.1 Tuning Kecepatan (otomatis)
+
+Server otomatis menyetel engine untuk performa terbaik saat membuka
+database (tidak perlu diatur klien):
+
+| Pengaturan | Nilai | Manfaat |
+|---|---|---|
+| `journal_mode` | WAL | baca paralel, tulis tak blokir baca |
+| `synchronous` | NORMAL | tulis lebih cepat (aman di WAL) |
+| `mmap_size` | 256 MB | pembacaan lebih cepat |
+| `cache_size` | ~64 MB | cache halaman di RAM |
+| `temp_store` | MEMORY | operasi tabel sementara di RAM |
+| `wal_autocheckpoint` | 1000 | WAL tidak membengkak |
+| `busy_timeout` | 15 s | tunggu saat terkunci |
+
+Hasil uji lokal (Windows, SSD, 1 juta baris):
+
+| Metrik | Sebelum tuning | Sesudah tuning |
+|---|---|---|
+| Isi 1 juta baris | ~202 s | ~169 s (~16% lebih cepat) |
+| Baca di kedalaman 999rb | ~95 ms | ~51 ms (~46% lebih cepat) |
+
+**Tips untuk hasil terbaik:**
+
+- **Banyak data?** Kirim `insert` dalam **array** (bulk) — jauh lebih cepat
+  daripada satu-satu. TeritipDB otomatis membungkusnya dalam satu transaksi.
+- **Kolom yang sering di-`where`?** Buat index: `create_index`.
+- **Tabel besar di browser?** Pakai **cursor** (`after`), bukan `offset` besar.
+
+Hasil uji bulk insert 1 juta baris (Windows, SSD):
+
+| Cara | Waktu |
+|---|---|
+| insert satu-satu (1000/request) | ~202 s |
+| + tuning PRAGMA | ~169 s |
+| + bulk 5000/request & 1 transaksi | **~55 s** |
+
+### 19.2 Kunci Kecepatan: Gabungkan Tulis Jadi Batch
+
+Bila banyak pengguna/proses menulis **bersamaan**, jangan kirim satu
+`insert` per request. Overhead per-request (koneksi, prepare, commit)
+jauh lebih mahal daripada barisnya. **Gabungkan** beberapa baris dalam
+satu request:
+
+```json
+{ "op": "insert", "table": "log", "data": [
+  { "user": 1, "aksi": "login" },
+  { "user": 2, "aksi": "klik" },
+  { "user": 3, "aksi": "logout" }
+] }
+```
+
+Hasil uji 200 pengguna paralel (Windows, SSD):
+
+| Cara kirim | Baris/detik |
+|---|---|
+| 1 baris per request | ~72 |
+| **10 baris per request (batch)** | **~993** |
+
+**~13x lebih cepat** hanya dengan menggabungkan tulis jadi batch.
+
+Saran praktis:
+
+- Kumpulkan tulis selama ~50-200 ms, lalu kirim sekaligus (batch).
+- Untuk impor besar, pakai `import` (sudah satu transaksi).
+- Baca tidak terpengaruh — tetap paralel lewat WAL.
+</script>
+
+<script type="text/markdown" id="md-server"># Analisis: Server/Hosting yang Dapat Memakai TeritipDB
+
+Dokumen ini menganalisis di **target server/hosting apa saja** TeritipDB
+dapat dijalankan. Tanpa asumsi — dibuat berdasarkan kenyataan teknis tiap
+jenis hosting.
+
+## 0. Konsep TeritipDB
+
+- Ditulis dengan **C++** (pola seperti proyek `nxc`).
+- **Bukan** aplikasi desktop, **bukan** upload ke panel.
+- **Install lewat npm, satu perintah**:
+
+  ```
+  npm create teritip-app@latest
+  ```
+
+- Setelah terpasang, dipakai dengan:
+
+  ```
+  teritip
+  teritip-client '{"op":"select","table":"users"}' --port 7000
+  ```
+
+- Targetnya: **semua mesin yang punya terminal dan boleh menjalankan proses**
+  (lihat tabel bagian 2).
+
+## 1. Apa yang Membutuhkan TeritipDB
+
+TeritipDB adalah sebuah **mesin database** (seperti MySQL/MariaDB) dengan
+API berbasis JSON. Karena itu, supaya bisa dipakai, server harus mampu:
+
+1. **Menjalankan proses program** (server) yang hidup terus.
+2. **Menyimpan file data** (file database).
+3. **Menerima koneksi** dari klien (lewat port/jaringan atau lokal).
+
+Poin 1 adalah **penentu utama**. Hosting yang tidak bisa menjalankan
+proses sendiri (mis. hanya PHP per-request) tidak bisa menjalankan server
+TeritipDB.
+
+## 2. Ragam Target Server
+
+| Target | Bisa jalankan proses? | Bisa jalan TeritipDB? | Cocok untuk |
+|---|---|---|---|
+| PC biasa (Windows/Linux/macOS) | Ya | **Ya** | Belajar, uji, pemakaian pribadi |
+| VPS / Dedicated Server | Ya, penuh | **Ya** | Produksi, publik |
+| Docker (di mana saja) | Ya | **Ya** | Produksi, portabel |
+| Shared hosting (cPanel murah) | Tidak (hanya PHP) | **Tidak** | — |
+| Shared hosting + Node.js App | Terbatas | **Kadang** | Ringan |
+| CyberPanel / aaPanel (di VPS) | Ya (ada terminal) | **Ya** | Produksi |
+| cPanel (di VPS, bukan shared) | Ya (ada terminal) | **Ya** | Produksi |
+| Serverless (Vercel/Netlify) | Tidak (stateless) | **Tidak** | — |
+| Windows Server | Ya | **Ya** | Produksi |
+
+## 3. Penjelasan Tiap Target
+
+### 3.1 PC Biasa (bukan server) — BISA
+PC biasa (Windows, Linux, macOS) sama-sama bisa menjalankan TeritipDB,
+karena PC juga mampu menjalankan proses dan menyimpan file. Bedanya
+dengan server bukan pada kemampuan, melainkan pada peran:
+
+- **PC**: dipakai sendiri, tidak selalu hidup (dimatikan saat tidak dipakai).
+- **Server**: hidup terus, melayani banyak klien.
+
+Contoh nyata: PC Windows seperti saat ini **sudah bisa** menjalankan
+TeritipDB. Buka satu terminal untuk server (`teritip-server`), buka terminal
+lain untuk klien (`teritip-client`). Database disimpan sebagai file di PC itu.
+
+Keterbatasan PC biasa sebagai server produksi:
+- Tidak hidup 24 jam (kalau dimatikan, klien tidak bisa konek).
+- Biasanya di belakang NAT/router, tidak otomatis bisa diakses dari internet
+  tanpa pengaturan port forwarding.
+
+Singkatnya: PC biasa = **bisa** untuk pemakaian pribadi/uji; untuk melayani
+publik 24 jam, baru pindah ke server.
+
+### 3.2 VPS / Dedicated Server — BISA
+Server sendiri, akses penuh. Install compiler/binary, jalankan TeritipDB
+sebagai service (systemd di Linux, service/Windows Service di Windows).
+Ini target paling ideal.
+
+### 3.3 Docker — BISA
+TeritipDB dibungkus jadi image. Jalan konsisten di mana saja yang ada
+Docker (lokal, VPS, cloud). Paling portabel.
+
+### 3.4 Shared Hosting (cPanel murah) — TIDAK BISA
+Hosting jenis ini hanya menjalankan PHP per-permintaan. Tidak boleh
+menjalankan proses lama, tidak ada akses untuk binary sendiri. Jadi server
+TeritipDB tidak bisa jalan di sini.
+
+Catatan: phpMyAdmin bisa jalan di cPanel karena ia **aplikasi PHP**, bukan
+server database. phpMyAdmin hanya alat untuk *mengakses* MySQL yang sudah
+jalan di server. TeritipDB berbeda: ia **servernya sendiri**.
+
+### 3.5 CyberPanel / aaPanel — BISA (karena berbasis VPS)
+Panel ini dipasang di VPS, dan menyediakan **terminal** + akses root.
+Karena itu proses apa pun (termasuk TeritipDB) bisa dijalankan, sama
+seperti di VPS biasa. Panel hanya alat manajemen, bukan pembatas.
+
+### 3.5 cPanel yang Terpasang di VPS — BISA
+Berbeda dari shared hosting: bila cPanel dipasang di VPS penuh (bukan
+paket berbagi), Anda punya akses terminal/root. TeritipDB bisa dijalankan.
+Kuncinya bukan "cPanel", melainkan **apakah Anda punya akses proses penuh**.
+
+### 3.6 Serverless — TIDAK BISA
+Tidak ada proses yang hidup terus, tidak ada penyimpanan tetap. TeritipDB
+butuh keduanya.
+
+## 4. Kesimpulan
+
+**TeritipDB dapat dipakai di mana saja yang memberi akses menjalankan
+proses dan menyimpan data secara tetap, termasuk PC biasa:**
+
+- PC biasa (Windows / Linux / macOS) — pemakaian pribadi & uji
+- VPS / Dedicated Server
+- Docker (di mana saja)
+- CyberPanel / aaPanel / cPanel **di atas VPS**
+- Windows Server
+
+**TeritipDB tidak dapat dipakai di:**
+
+- Shared hosting murni (hanya PHP)
+- Serverless (Vercel/Netlify/Cloud Functions)
+
+## 5. Yang Menentukan (Ringkas)
+
+Bukan nama panelnya, bukan "server vs PC", tetapi satu pertanyaan:
+
+> **Apakah mesin itu mengizinkan menjalankan program/proses sendiri yang
+> hidup terus dan menyimpan file?**
+
+- **Ya** -> TeritipDB bisa (termasuk PC biasa, termasuk PC saat ini).
+- **Tidak** -> TeritipDB tidak bisa (shared hosting, serverless).
+
+Beda PC dan server hanya pada **peran**: PC untuk pemakaian pribadi, server
+untuk melayani publik 24 jam. Kemampuan menjalankan TeritipDB-nya sama.</script>
+
+<script type="text/markdown" id="md-readme-en">
+# TeritipDB
+
+**The database engine that speaks JSON, not SQL.**
+
+TeritipDB is a database engine — a peer of MySQL/MariaDB/PostgreSQL —
+but clients do not write SQL. Clients just send **simple JSON**. Internally,
+data is stored in its own internal storage.
+
+```
+Client  --(JSON over HTTP)-->  teritip-server  -->  internal engine
+```
+
+Written in **C++**. Every database runs as its own server with its own port.
+
+## How to Install
+
+Prerequisites:
+
+- **Node.js 18+** (with `npm`) — for the npm install method.
+- **`tar`** — built into Windows 10+ & Linux.
+- **C++ compiler** (MSVC 2022 / gcc-clang) — only if you want to build an
+  app using the SDK.
+
+The easiest way (via npm):
+
+```
+npm create teritip-app@latest
+```
+
+This downloads TeritipDB, installs it into the user's data folder, and adds
+it to the PATH automatically. When it finishes, open a new terminal and
+type `teritip`.
+
+Or from the release package (manual): extract the release package, then
+copy the contents of the `bin/` folder into a folder that is on your PATH.
+
+Full guide: [User Guide](#panduan).
+
+## Quick Usage
+
+```
+teritip      # open the menu
+```
+
+In the menu: create a database (automatic port), then Start. After that send
+commands from another terminal:
+
+```
+teritip-client '{"op":"insert","table":"users","data":{"name":"Budi","age":30}}' --port 7000
+teritip-client '{"op":"select","table":"users"}' --port 7000
+```
+
+## Usage (the `teritip` menu)
+
+`teritip` is the main entry point. It manages many databases at once —
+each database runs as its own server with its own port.
+
+```
+teritip
+```
+
+```
+TERITIPDB
+(NXDOM) Nusantara eXtreme Development Object Model
+Version :v0.9.0
+===================================================
+  Master port: 7000  (global admin)  |  Derived ports: 7001+
+
+  (no databases yet)
+---------------------------------------------------
+  1. Create new database
+  2. Manage database (start/stop/delete)
+  3. Settings (base port)
+  4. Auto-start (ON)
+  5. For developers (API info)
+  6. Master server (global admin)
+  0. Exit
+---------------------------------------------------
+```
+
+- **1. Create new database** — create a new database; the port is assigned
+  automatically (7000, 7001, ...).
+- **2. Manage database** — pick a database, then Start / Stop / Delete.
+- **3. Settings** — change the base port.
+
+Databases are stored as files:
+
+- Windows: `%APPDATA%\TeritipDB\data\<name>.db`
+- Linux:   `~/.local/share/TeritipDB/<name>.db`
+
+Isolation: one database = one server + one port. Different databases run
+side by side without interfering with each other.
+
+## Using the client
+
+```
+teritip-client '{"op":"insert","table":"users","data":{"name":"Budi","age":30}}' --port 7000
+teritip-client '{"op":"select","table":"users"}' --port 7000
+teritip-client '{"op":"select","table":"users","where":{"age":{">":20}}}' --port 7000
+```
+
+Options: `--host H` (default 127.0.0.1), `--port P` (default 7000).
+
+## Using HTTP (Postman / any app)
+
+```
+POST http://127.0.0.1:7000/query
+Content-Type: application/json
+
+{ "op": "select", "table": "users" }
+```
+
+Response:
+
+```json
+{"ok":true,"data":[{"id":1,"name":"Budi","age":30}],"meta":{"count":1}}
+```
+
+Health check:
+
+```
+GET http://127.0.0.1:7000/health
+```
+
+## Protocol
+
+- Protocol: **HTTP**.
+- `POST /query` — JSON body, JSON reply.
+- `GET /health` — server status.
+
+## JSON Syntax
+
+The full operation syntax (insert, update, delete, select, join, tx,
+`where`, data types, error format) is in [Syntax](#sintaks).
+
+## Running the server directly (without the menu)
+
+```
+teritip-server --port 7000 --db "D:\path\to\data.db"
+```
+
+## SDK for C++ developers
+
+The engine is also available as a library you can use directly from C++
+(embedded, no server):
+
+```cpp
+#include <teritip/Database.h>
+
+teritip::Database db;
+db.open("app.db");
+db.query(R"({"op":"insert","table":"users","data":{"name":"Budi"}})");
+auto res = db.query(R"({"op":"select","table":"users"})");
+```
+
+The SDK package is released via GitHub Releases (repo `teritip-sdk`) and is
+used with `find_package(teritip CONFIG REQUIRED)`.
+
+## Installing via npm
+
+```
+npm create teritip-app@latest
+```
+
+Installs TeritipDB (server + client) on your system and adds it to the PATH.
+
+## Supported Targets
+
+Any machine that has a terminal and may run its own processes: ordinary PC
+(Windows/Linux/macOS), WSL, VPS, Docker, VPS-based panels, Windows Server.
+Details: [Server & Hosting](#server).
+</script>
+
+<script type="text/markdown" id="md-sintaks-en">
+# TeritipDB - Operation Syntax (JSON style)
+
+This document explains TeritipDB's operation syntax. Clients just send
+JSON, without writing SQL. The TeritipDB server (C++) translates it into
+engine operations.
+
+## 1. Creating a Database
+
+A database is created from the `teritip` menu (terminal): **Create new
+database**. One database = one `.db` file + one server on its own port.
+Each database has a **token** (prefix `nx_`) for authentication.
+
+### Port concept: root and derived
+
+- **Root port** (default **7000**) = the **global admin** server. It
+  serves the management API: list/create/drop all databases (see 1d).
+  Started from the `teritip` menu -> **Master server**.
+- **Derived ports** (default **7001, 7002, ...**) = **per-project** servers.
+  Each database gets its own isolated port. Started from the `teritip`
+  menu -> **Manage database** -> Start.
+
+So: root (7000) manages everything, derived (7001+) handles per-project work.
+
+File locations:
+
+- Windows: `%APPDATA%\TeritipDB\data\<name>.db`
+- Linux:   `~/.local/share/TeritipDB/<name>.db`
+
+## 1b. Authentication (Token)
+
+If the server runs with a token, every `POST` command **must** include the
+token in the header:
+
+```
+Authorization: Bearer nx_...
+```
+
+With no token / a wrong token, the server replies `401` with
+`{"ok":false,"meta":{"error":"unauthorized",...}}`. If the token has
+expired: `{"error":"token_expired"}`.
+
+The token is managed from the `teritip` menu (**Token** option): view,
+regenerate, set the expiry (in days or no expiry).
+
+## 1e. Per-User Access (Role)
+
+Besides the server's built-in token, one database can have many **users**,
+each with its **own token** and a **role**. Useful when you want limited
+access (e.g. a read-only token for a public app).
+
+### Roles
+
+| Role | May run |
+|---|---|
+| `read` | `select`, `show_tables`, `export`, `logs`, `join`, `list_files`, `get_file` |
+| `write` | all `read` + `insert`, `update`, `delete`, `import`, `create_index`, `upload`, `delete_file` |
+| `admin` | **everything** (including `create_table`, `drop_table`, `tx`, user management) |
+
+- The server's built-in token (`--token`) is always **admin**.
+- User tokens are stored **hashed** (SHA-256); the raw token is shown only
+  **once** at `create_user`.
+- If the role is not allowed, the server replies `403` with
+  `{"error":"forbidden"}`.
+
+### Create a user
+
+```json
+{ "op": "create_user", "name": "budi", "role": "write" }
+```
+
+Returns (save the `token` — it will not be shown again):
+
+```json
+{ "ok": true, "data": [ { "name": "budi", "role": "write", "token": "nx_3f9a..." } ] }
+```
+
+Default role if omitted: `admin`.
+
+### List / change / remove users
+
+```json
+{ "op": "list_users" }
+{ "op": "set_role", "name": "budi", "role": "read" }
+{ "op": "drop_user", "name": "budi" }
+```
+
+## 1f. Brute-Force Protection (Rate Limit)
+
+The server protects tokens from guessing attempts:
+
+- **10 failed attempts in 1 minute** from one IP -> that IP is **blocked for 5 minutes**.
+- While blocked, every `POST` from that IP is answered `429` with
+  `{"error":"too_many_attempts"}`.
+- A **successful** attempt resets the counter (legit users are not punished).
+
+## 1c. HTTP Endpoints
+
+- `POST /` and `POST /query` — send a JSON command.
+- `GET /health` — check the server is alive (no token).
+- `GET /ws` — WebSocket for realtime notifications (see section 15).
+
+## 1d. Database Management (Root Server)
+
+Runs on the **root server** (default port 7000). Used to manage every
+database (e.g. by a developer-built web admin).
+
+### List all databases
+
+```json
+{ "op": "list_databases" }
+```
+
+Returns:
+
+```json
+{ "ok": true,
+  "data": [
+    { "name": "toko", "file": "C:\\...\\data\\toko.db", "size": 8192 },
+    { "name": "sekolah", "file": "C:\\...\\data\\sekolah.db", "size": 4096 }
+  ],
+  "meta": { "count": 2 } }
+```
+
+### Create a database
+
+```json
+{ "op": "create_database", "name": "toko" }
+```
+
+Creates a `<name>.db` file in the data folder. Its derived server is
+started separately (from the `teritip` menu).
+
+### Drop a database
+
+```json
+{ "op": "drop_database", "name": "toko" }
+```
+
+**Warning:** deletes the database file along with its contents.
+
+## 2. Creating Tables and Columns (Free Mode / NoSQL)
+
+TeritipDB uses free mode: clients do not need to define tables in advance.
+**Just send an insert, and the table + columns are created automatically**
+if missing (schema-less).
+
+### Table created automatically on insert
+
+```json
+{ "op": "insert", "table": "buku", "data": { "judul": "Laskar Pelangi", "tahun": 2005 } }
+```
+
+If the `buku` table does not exist, TeritipDB automatically runs (behind
+the scenes):
+
+```sql
+CREATE TABLE IF NOT EXISTS buku (id INTEGER PRIMARY KEY AUTOINCREMENT);
+ALTER TABLE buku ADD COLUMN judul TEXT;
+ALTER TABLE buku ADD COLUMN tahun INTEGER;
+INSERT INTO buku (judul, tahun) VALUES (?, ?);
+```
+
+### New columns are added automatically
+
+A later insert with a new column adds that column:
+
+```json
+{ "op": "insert", "table": "buku", "data": { "judul": "Bumi Manusia", "penulis": "Pramoedya" } }
+```
+
+The `penulis` column is created automatically because it did not exist.
+The `tahun` column that was not sent is filled with NULL.
+
+### You may create a table explicitly (optional)
+
+Clients may create an empty table first if they want to control the structure:
+
+```json
+{ "op": "create_table", "table": "buku" }
+```
+
+Because column types are determined automatically from the data,
+`create_table` only creates an empty table with the `id` column. Other
+columns follow on the first insert.
+
+### Column type validation (optional)
+
+If you want strictly-typed columns, declare the type on `create_table`.
+The `id` column is **always automatic** (integer, auto-increment) and does
+not need to be declared.
+
+```json
+{ "op": "create_table", "table": "produk",
+  "columns": { "nama": "text", "harga": "integer", "berat": "real" } }
+```
+
+Known types (aliases are equivalent):
+
+- `integer` / `int` / `bool`
+- `real` / `float` / `double` / `number`
+- `text` / `string` / `varchar`
+
+Once declared, an `insert`/`update`/`import` that sends a value of the
+**wrong type** is rejected with a `type_mismatch` error:
+
+```json
+{ "op": "insert", "table": "produk", "data": { "nama": "Kopi", "harga": "mahal" } }
+```
+
+```json
+{ "ok": false, "meta": { "error": "type_mismatch", "message": "column 'harga' is integer but the value on row 1 is not that type" } }
+```
+
+- `NULL` is always accepted for any column.
+- A column that is **not** declared (free mode) still accepts anything.
+
+### Free mode rules
+
+- Table and column names must be safe identifiers: letters, digits,
+  underscore, may not start with a digit, and may not contain spaces.
+- Built-in system tables (`schema_migrations`, `internal_*`) may not be
+  overwritten by clients.
+- Column types are determined from the first JSON value that arrives;
+  later values are coerced to that type.
+
+## 3. General Shape
+
+Request:
+
+```json
+{ "op": "<insert|update|delete|select|join|tx|create_table|show_tables|create_index|drop_table|export|import|list_databases|create_database|drop_database|create_user|list_users|drop_user|set_role|upload|list_files|get_file|delete_file|logs>",
+  "table": "<name>", ... }
+```
+
+Response:
+
+```json
+{ "ok": true, "data": [], "meta": { "count": 0 } }
+```
+
+- `ok` (boolean): success or failure.
+- `data` (array/object): result of a select/join.
+- `meta`: extra info (row count, new id, etc). On error, `meta` contains
+  `error` and `message`.
+
+## 4. Insert
+
+```json
+{ "op": "insert", "table": "users", "data": { "nama": "Budi", "umur": 30 } }
+```
+
+Becomes: `INSERT INTO users (nama, umur) VALUES (?, ?);`
+
+Returns (the stored data is **always** returned):
+
+```json
+{ "ok": true,
+  "data": [ { "id": 1, "nama": "Budi", "umur": 30 } ],
+  "meta": { "lastInsertId": 1, "returned": 1, "rowsAffected": 1 } }
+```
+
+- The `id` column does not need to be sent; it is filled automatically (auto-increment).
+- The insert result already contains the data, so **no select is needed**.
+- To skip returning data, send `"return": false`:
+
+```json
+{ "op": "insert", "table": "users", "data": { "nama": "Budi" }, "return": false }
+```
+
+```json
+{ "ok": true, "data": [], "meta": { "lastInsertId": 2, "rowsAffected": 1 } }
+```
+
+### Bulk insert
+
+```json
+{ "op": "insert", "table": "users", "data": [ { "nama": "Budi" }, { "nama": "Siti" } ] }
+```
+
+Becomes:
+
+```sql
+INSERT INTO users (nama) VALUES (?), (?);
+```
+
+Returns:
+
+```json
+{ "ok": true,
+  "data": [ { "id": 1, "nama": "Budi" }, { "id": 2, "nama": "Siti" } ],
+  "meta": { "lastInsertId": 2, "returned": 2, "rowsAffected": 2 } }
+```
+
+## 5. Update
+
+```json
+{ "op": "update", "table": "users", "where": { "id": 1 }, "data": { "umur": 31 } }
+```
+
+Becomes: `UPDATE users SET umur = ? WHERE id = ?;`
+
+Returns (the updated rows are always returned):
+
+```json
+{ "ok": true,
+  "data": [ { "id": 1, "nama": "Budi", "umur": 31 } ],
+  "meta": { "returned": 1, "rowsAffected": 1 } }
+```
+
+Send `"return": false` to skip returning data.
+
+**Important:** `update` without `where` is rejected, so it does not change
+the whole table by accident. To deliberately change every row, use the
+explicit flag: `"all": true`.
+
+## 6. Delete
+
+```json
+{ "op": "delete", "table": "users", "where": { "id": 1 } }
+```
+
+Becomes: `DELETE FROM users WHERE id = ?;`
+
+Returns:
+
+```json
+{ "ok": true, "meta": { "deleted": 1 } }
+```
+
+**Important:** `delete` without `where` is also rejected, with the same
+`"all": true` flag rule as `update`.
+
+## 7. Select
+
+```json
+{ "op": "select", "table": "users", "select": ["id", "nama"], "where": { "umur": { ">": 20 } }, "limit": 10, "offset": 0 }
+```
+
+Becomes: `SELECT id, nama FROM users WHERE umur > ? LIMIT ? OFFSET ?;`
+
+- `select` may list columns; if omitted, the default is `*`.
+- `offset` is used for pagination together with `limit`.
+
+Returns:
+
+```json
+{
+  "ok": true,
+  "data": [ { "id": 1, "nama": "Budi" } ],
+  "meta": { "count": 1, "limit": 10, "offset": 0 }
+}
+```
+
+### 7.1 Pagination (for large data / browsers)
+
+There are **two** ways to paginate. Pick one based on data size.
+
+**a. Offset (simple, good for small-to-medium data)**
+
+```json
+{ "op": "select", "table": "users",
+  "select": ["id", "nama"],
+  "order": [ { "column": "id", "dir": "asc" } ],
+  "limit": 25, "offset": 50 }
+```
+
+`offset: 50` = skip 50 rows (page 3 if `limit` is 25).
+Downside: on millions of rows, a large `offset` is slow (the engine must
+step over many rows).
+
+**b. Cursor (fast, REQUIRED for large data)**
+
+Fetch the first page with `limit`; the reply includes `meta.hasMore` and
+`meta.next` (the key value of the last row). The next page uses `after`:
+
+```json
+{ "op": "select", "table": "users",
+  "select": ["id", "nama"],
+  "order": [ { "column": "id", "dir": "asc" } ],
+  "limit": 25 }
+```
+
+```json
+{ "ok": true,
+  "data": [ { "id": 1, "nama": "Budi" } ],
+  "meta": { "hasMore": true, "next": { "id": 25 } } }
+```
+
+Next page:
+
+```json
+{ "op": "select", "table": "users",
+  "select": ["id", "nama"],
+  "order": [ { "column": "id", "dir": "asc" } ],
+  "limit": 25, "after": { "id": 25 } }
+```
+
+- `after: { "id": 25 }` -> fetch rows with `id > 25` (or `<` when the
+  order is `desc`). The `after` column **must match** the `order` column.
+- `meta.hasMore`: `true` if there is another page.
+- `meta.next`: the cursor for the next page (the order column's value on
+  the last row). It is added automatically even if not in `select`.
+- `meta.total`: the total row count — set only when you ask with
+  `"countTotal": true` (expensive on large data, so optional).
+
+Browser pattern (JavaScript):
+
+```js
+async function page(cursor) {
+  const req = { op: "select", table: "users",
+                select: ["id", "nama"],
+                order: [{ column: "id", dir: "asc" }],
+                limit: 25 };
+  if (cursor) req.after = cursor;
+  const res = await fetch("http://127.0.0.1:7001/", {
+    method: "POST",
+    headers: { "Content-Type": "application/json",
+               "Authorization": "Bearer nx_..." },
+    body: JSON.stringify(req)
+  }).then(r => r.json());
+  render(res.data);                             // show 25 rows
+  nextButton(res.meta.hasMore, res.meta.next);  // "Next" button
+}
+```
+
+**Important:** when paginating, **always** include `order` (usually
+`id asc`). Without `order`, row order is not guaranteed, so rows can be
+skipped or duplicated between pages.
+
+## 8. `where` Format (Filter)
+
+`where` supports comparison operators, logic, and special conditions.
+
+### Comparison operators
+
+```json
+{ "op": "select", "table": "users", "where": { "umur": { ">": 20 } } }
+```
+
+```sql
+SELECT * FROM users WHERE umur > ?;
+```
+
+Allowed operators: `=`, `!=`, `>`, `>=`, `<`, `<=`.
+
+### IN
+
+```json
+{ "op": "select", "table": "users", "where": { "kota": { "in": ["Jakarta", "Bandung"] } } }
+```
+
+```sql
+SELECT * FROM users WHERE kota IN (?, ?);
+```
+
+### LIKE (text search)
+
+```json
+{ "op": "select", "table": "users", "where": { "nama": { "like": "%bud%" } } }
+```
+
+```sql
+SELECT * FROM users WHERE nama LIKE ?;
+```
+
+### NULL
+
+```json
+{ "op": "select", "table": "users", "where": { "email": null } }
+```
+
+```sql
+SELECT * FROM users WHERE email IS NULL;
+```
+
+For not null: `{ "email": { "not": null } }` -> `IS NOT NULL`.
+
+### AND / OR / NOT and grouping
+
+Nested conditions are written with the keys `and`, `or`, `not`:
+
+```json
+{
+  "op": "select",
+  "table": "users",
+  "where": {
+    "and": [
+      { "kota": "Jakarta" },
+      { "or": [ { "umur": { ">": 30 } }, { "vip": true } ] }
+    ]
+  }
+}
+```
+
+```sql
+SELECT * FROM users WHERE kota = ? AND (umur > ? OR vip = ?);
+```
+
+- `and` / `or` contain an array of conditions.
+- `not` inverts a single condition.
+- Combined `and`/`or` are parenthesized automatically so the logic order is correct.
+
+## 9. JOIN
+
+Because a JOIN combines more than one table, the operation uses
+`op: "join"` with a `joins[]` list and an `on` condition.
+
+```json
+{
+  "op": "join",
+  "table": "users",
+  "joins": [
+    { "type": "left", "table": "orders", "on": { "users.id": "orders.user_id" } }
+  ],
+  "select": ["users.nama", "orders.total"],
+  "where": { "orders.total": { ">": 100 } },
+  "limit": 20
+}
+```
+
+Becomes:
+
+```sql
+SELECT users.nama, orders.total
+FROM users
+LEFT JOIN orders ON users.id = orders.user_id
+WHERE orders.total > ?
+LIMIT ?;
+```
+
+Allowed `type` values: `inner`, `left`, `right`, `full`.
+
+The result contains the joined rows. For nested results, use the `nest`
+block:
+
+```json
+{
+  "op": "join",
+  "table": "users",
+  "joins": [ { "type": "left", "table": "orders", "on": { "users.id": "orders.user_id" } } ],
+  "select": ["users.id", "users.nama", "orders.total"],
+  "nest": { "children": "orders", "on": "users.id" }
+}
+```
+
+Returns:
+
+```json
+{
+  "ok": true,
+  "data": [
+    { "id": 1, "nama": "Budi", "orders": [ { "total": 150 } ] }
+  ]
+}
+```
+
+## 10. ORDER BY
+
+```json
+{ "op": "select", "table": "users", "order": [ { "column": "name", "dir": "asc" } ] }
+```
+
+Becomes: `SELECT * FROM users ORDER BY name ASC;`
+
+Note: the `column` key is provided (global). The old `kolom` key is still
+accepted for compatibility.
+
+## 11. GROUP BY + Aggregates
+
+An aggregate is written as an item in `select` using the form
+`{ "<aggregate>": "<column>", "as": "<alias>" }`. Supported aggregates:
+`count`, `sum`, `avg`, `min`, `max`.
+
+### COUNT
+
+```json
+{
+  "op": "select",
+  "table": "orders",
+  "select": [ "user_id", { "count": "*", "as": "jumlah" } ],
+  "group": ["user_id"]
+}
+```
+
+Becomes:
+
+```sql
+SELECT user_id, COUNT(*) AS jumlah
+FROM orders
+GROUP BY user_id;
+```
+
+### SUM
+
+```json
+{
+  "op": "select",
+  "table": "orders",
+  "select": [ "user_id", { "sum": "total", "as": "omzet" } ],
+  "group": ["user_id"]
+}
+```
+
+Becomes:
+
+```sql
+SELECT user_id, SUM(total) AS omzet
+FROM orders
+GROUP BY user_id;
+```
+
+### AVG / MIN / MAX
+
+```json
+{
+  "op": "select",
+  "table": "orders",
+  "select": [
+    { "avg": "total", "as": "avg" },
+    { "min": "total", "as": "min" },
+    { "max": "total", "as": "max" }
+  ]
+}
+```
+
+Without `group`, the aggregate spans the whole table. It can be combined
+with `where` to limit the rows counted.
+
+### 11.1 HAVING (filter grouped results)
+
+`having` filters **after** grouping (e.g. only groups with a certain count).
+It can only be used together with `group`.
+
+```json
+{
+  "op": "select",
+  "table": "orders",
+  "select": [ "user_id", { "count": "*", "as": "n" } ],
+  "group": ["user_id"],
+  "having": { "n": { ">": 5 } }
+}
+```
+
+Becomes:
+
+```sql
+SELECT user_id, COUNT(*) AS n
+FROM orders
+GROUP BY user_id
+HAVING n > 5;
+```
+
+`having` follows the same rules as `where` (operators `= != > >= < <=`, `in`,
+`like`, `null`, `and`/`or`/`not`), but here the compared values are
+**aggregate result columns** (e.g. aliases `n`, `total`).
+
+Notes:
+
+- `having` without `group` -> `validation_failed` error.
+- `after` (cursor) cannot be combined with `group` (aggregate results are
+  not a row stream) -> `validation_failed` error.
+- Column names in `group` are validated; invalid names -> `invalid_column` error.
+
+## 12. Transaction
+
+Every operation inside `ops` runs all-or-nothing. If one fails, all are
+rolled back.
+
+```json
+{
+  "op": "tx",
+  "ops": [
+    { "op": "update", "table": "users", "where": { "id": 1 }, "data": { "saldo": -100 } },
+    { "op": "update", "table": "users", "where": { "id": 2 }, "data": { "saldo": 100 } }
+  ]
+}
+```
+
+Returns:
+
+```json
+{ "ok": true, "meta": { "applied": 2 } }
+```
+
+- `tx` may only contain `insert`, `update`, and `delete` (operations that
+  change data). `select`/`join` are not allowed inside a `tx`.
+- `tx` may not be nested (no `tx` inside a `tx`).
+
+## 13. Data Types and Special Values
+
+- **Numbers:** JSON number -> INTEGER/REAL in the internal engine.
+- **Text:** JSON string -> TEXT (UTF-8).
+- **Boolean:** JSON `true`/`false` -> stored as INTEGER `1`/`0`
+  (the engine has no boolean type).
+- **Date/time:** send as an ISO 8601 string, e.g.
+  `"2026-10-09T14:30:00Z"`, stored as TEXT.
+- **NULL:** send JSON `null` -> stored as SQL NULL.
+- **Column not sent:** on `insert`, columns absent from `data` are filled
+  with their default/NULL (or fail if the column is `NOT NULL` with no default).
+
+## 14. Managing Tables and Indexes
+
+### List tables + columns
+
+```json
+{ "op": "show_tables" }
+```
+
+Returns:
+
+```json
+{ "ok": true,
+  "data": [
+    { "table": "users", "columns": ["id", "nama", "umur"] },
+    { "table": "orders", "columns": ["id", "user_id", "total"] }
+  ],
+  "meta": { "count": 2 } }
+```
+
+### Create an empty table (explicit)
+
+```json
+{ "op": "create_table", "table": "users" }
+```
+
+### Create an index (speed up lookups)
+
+```json
+{ "op": "create_index", "table": "users", "columns": ["nama"] }
+```
+
+Multiple columns are allowed, and it can be unique:
+
+```json
+{ "op": "create_index", "table": "users", "columns": ["nama", "umur"], "unique": true }
+```
+
+The index name is generated automatically (e.g. `idx_users_nama`), or set
+it yourself with `"name": "..."`.
+
+### Drop a table
+
+```json
+{ "op": "drop_table", "table": "users" }
+```
+
+**Warning:** deletes the entire table along with its contents.
+
+### Export table data
+
+```json
+{ "op": "export", "table": "users" }
+```
+
+Returns: every row of the table.
+
+```json
+{ "ok": true,
+  "data": [ { "id": 1, "nama": "Budi" }, { "id": 2, "nama": "Siti" } ],
+  "meta": { "count": 2 } }
+```
+
+### Import table data
+
+```json
+{ "op": "import", "table": "users",
+  "data": [ { "nama": "Budi", "umur": 30 }, { "nama": "Siti", "umur": 25 } ] }
+```
+
+The `mode` option:
+
+- `"append"` (default) — add to the existing data.
+- `"replace"` — clear the table first, then fill it with the new data.
+
+```json
+{ "op": "import", "table": "users", "mode": "replace", "data": [ { "nama": "X" } ] }
+```
+
+Import runs in a single transaction: if any row fails, everything is
+rolled back.
+
+## 14b. File Upload (Images / Documents)
+
+TeritipDB can store **files** (images, PDFs, documents). The actual file is
+saved as a file in the `files/` folder **next to the database file**, while
+its metadata is recorded in a system table. So the database stays light (it
+does not hold the file contents), but finding files is easy.
+
+### Send a file (upload)
+
+The file contents are sent as **base64**:
+
+```json
+{ "op": "upload", "name": "ktp.jpg", "mime": "image/jpeg", "data": "<base64>" }
+```
+
+Returns:
+
+```json
+{ "ok": true,
+  "data": [ { "id": "a50c6c7601972505", "name": "ktp.jpg",
+              "mime": "image/jpeg", "path": "files/a50c6c7601972505_ktp.jpg",
+              "size": 20480 } ] }
+```
+
+- `id` is used to reference this file (store it in one of your table
+  columns, e.g. `"foto": "a50c6c7601972505"`).
+- `data` may include a data-URL prefix (`data:image/png;base64,...`) — it is
+  cleaned automatically. `mime` is filled from the prefix if not given.
+- The file name is **sanitized** automatically (paths like `../../` are stripped).
+- Default size limit **25 MB** (configurable via `"maxSize"` in bytes).
+
+### List files
+
+```json
+{ "op": "list_files" }
+```
+
+Returns a list of `{ id, name, mime, path, size, at }`.
+
+### Get file contents (download)
+
+```json
+{ "op": "get_file", "id": "a50c6c7601972505" }
+```
+
+The reply includes `data` holding the file as **base64** (to save or send
+back to the browser).
+
+### Delete a file
+
+```json
+{ "op": "delete_file", "id": "a50c6c7601972505" }
+```
+
+Deletes the physical file **and** its record.
+
+### Example (JavaScript in the browser)
+
+```js
+const file = inputFile.files[0];
+const b64 = await new Promise(r => {
+  const fr = new FileReader();
+  fr.onload = () => r(fr.result.split(",")[1]);  // drop the prefix
+  fr.readAsDataURL(file);
+});
+await fetch("http://127.0.0.1:7001/", {
+  method: "POST",
+  headers: { "Content-Type": "application/json", "Authorization": "Bearer nx_..." },
+  body: JSON.stringify({ op: "upload", name: file.name, data: b64 })
+});
+```
+
+**Note:** when you **back up**, also copy the `files/` folder — otherwise
+the metadata exists but the physical files are gone.
+
+## 15. Realtime (Change Notifications)
+
+The server provides a WebSocket at `ws://<host>:<port>/ws?token=<token>`.
+A client subscribes to a table, then receives a notification **containing
+the data** whenever that table changes (insert/update/delete) — no refresh
+needed.
+
+### Subscribe
+
+Send after connecting:
+
+```json
+{ "subscribe": "users" }
+```
+
+The server replies:
+
+```json
+{ "type": "subscribed", "table": "users" }
+```
+
+### Notifications received
+
+```json
+{ "type": "change", "op": "insert", "table": "users",
+  "result": { "ok": true,
+              "data": [ { "id": 1, "nama": "Budi" } ],
+              "meta": { "lastInsertId": 1, "returned": 1, "rowsAffected": 1 } } }
+```
+
+### Unsubscribe
+
+```json
+{ "unsubscribe": "users" }
+```
+
+### Official tool
+
+```
+teritip-watch users --port 7000 --token nx_...
+```
+
+## 16. Cases Deliberately Not JSON-ified
+
+- Subqueries and window functions should not be forced into JSON. For
+  these cases, provide a limited SQL endpoint accessible only to
+  admin/internal, not general clients.
+
+## 16b. Activity Log
+
+Every data-changing operation (insert, update, delete, import, drop_table)
+is recorded automatically in the internal `teritip_log` table.
+
+Read the log:
+
+```json
+{ "op": "logs", "limit": 50 }
+```
+
+Returns (newest first):
+
+```json
+{ "ok": true,
+  "data": [
+    { "id": 3, "at": "2026-10-10 10:15:05", "op": "delete", "tbl": "users", "rows": 1 },
+    { "id": 2, "at": "2026-10-10 10:15:01", "op": "insert", "tbl": "users", "rows": 2 }
+  ],
+  "meta": { "count": 2 } }
+```
+
+The `teritip_log` table is a system table — it does not appear in
+`show_tables`.
+
+## 17. Error Format
+
+If an operation fails, it returns:
+
+```json
+{ "ok": false, "meta": { "error": "invalid_table", "message": "Table 'foo' is not allowed" } }
+```
+
+Suggested error codes:
+
+- `invalid_table` - the table name is not in the whitelist.
+- `invalid_column` - the column name is not in the whitelist.
+- `invalid_operator` - the operator is not allowed.
+- `validation_failed` - wrong value type/format.
+- `where_required` - `update`/`delete` without `where` and without `all: true`.
+- `not_found` - the endpoint/target data does not exist.
+- `unauthorized` - no token / wrong token.
+- `token_expired` - the token has expired.
+- `forbidden` - the user's role is not allowed to run that op.
+- `too_many_attempts` - too many failed attempts from this IP (rate limit).
+- `type_mismatch` - the value does not match the declared column type.
+- `already_exists` - the user already exists.
+- `invalid_user` - invalid user name.
+- `invalid_type` - unknown column type in `create_table`.
+- `invalid_base64` - the upload content is not valid base64.
+- `file_too_large` - the uploaded file exceeds the limit.
+- `io_error` - failed to read/write a file on disk.
+- `sql_error` - a failure in the engine layer.
+
+### 17.1 Improvement Hint (`hint`)
+
+When available, the error reply includes `hint` — a short suggestion (in
+English) for fixing the problem, handy for beginners:
+
+```json
+{ "ok": false, "meta": {
+  "error": "type_mismatch",
+  "message": "column 'harga' is integer but the value on row 1 is not that type",
+  "hint": "use type integer for column 'harga', or change the type in create_table"
+} }
+```
+
+`hint` is present on common errors: `type_mismatch`, `where_required`,
+`invalid_table`, required fields (`validation_failed`), `unauthorized`,
+`forbidden`, `token_expired`, and `too_many_attempts`.
+
+## 18. Security Rules for the JSON -> SQL Translator
+
+Because TeritipDB uses free mode (tables/columns created by clients),
+table and column whitelists do not apply. Instead:
+
+- **Validate identifiers** for table and column names: letters, digits, and
+  underscore only, not starting with a digit, limited length. Reject other names.
+- **Always parameter binding** (`?`) for all values. Table/column names
+  that pass identifier validation are assembled, not user values.
+- **Validate types** before storing (number, text, date).
+- **Whitelist `where` operators** (only allow `=, !=, >, >=, <, <=, in,
+  like, not`).
+- **Whitelist JOIN types** (`inner, left, right, full`) and `on` column pairs.
+- **Reject `update`/`delete` without `where`** unless the `all: true` flag is given.
+- **Protect system tables** (`schema_migrations`, `internal_*`) so clients
+  cannot create/modify them.
+
+## 19. Concurrent Writes (Concurrency)
+
+TeritipDB uses an engine in WAL mode. The engine allows **one writer at a
+time**, with many concurrent readers. To prevent writes from failing under
+load:
+
+- Any write that hits a lock is **retried** automatically until the lock is
+  free — it does not fail immediately.
+- Automatic table/column creation is **idempotent** (`CREATE TABLE IF NOT
+  EXISTS`, `ADD COLUMN` that tolerates duplicates), so many first writers
+  arriving together stay safe.
+
+Local test result: **2000 parallel writes (200 connections) = 0 failures**.
+
+Honest note: what is limited is **throughput** (hundreds of writes/sec), not
+integrity. For 1000 users writing **spread over time** — safe. For a burst
+of thousands of writes **at the same instant** — they will queue (nothing
+lost, just slower). If you need sustained massive writes, that is beyond
+this engine's scope.
+
+### 19.1 Speed Tuning (automatic)
+
+The server automatically tunes the engine for best performance when opening
+the database (nothing for clients to configure):
+
+| Setting | Value | Benefit |
+|---|---|---|
+| `journal_mode` | WAL | parallel reads, writes don't block reads |
+| `synchronous` | NORMAL | faster writes (safe under WAL) |
+| `mmap_size` | 256 MB | faster reads |
+| `cache_size` | ~64 MB | page cache in RAM |
+| `temp_store` | MEMORY | temp-table ops in RAM |
+| `wal_autocheckpoint` | 1000 | WAL does not grow too large |
+| `busy_timeout` | 15 s | wait when locked |
+
+Local test (Windows, SSD, 1 million rows):
+
+| Metric | Before tuning | After tuning |
+|---|---|---|
+| Fill 1 million rows | ~202 s | ~169 s (~16% faster) |
+| Read at depth 999k | ~95 ms | ~51 ms (~46% faster) |
+
+**Tips for best results:**
+
+- **Lots of data?** Send `insert` as an **array** (bulk) — far faster than
+  one by one. TeritipDB wraps it in a single transaction automatically.
+- **Columns often used in `where`?** Create an index: `create_index`.
+- **Large table in the browser?** Use the **cursor** (`after`), not a large `offset`.
+
+Bulk insert of 1 million rows (Windows, SSD):
+
+| Method | Time |
+|---|---|
+| insert one by one (1000/request) | ~202 s |
+| + PRAGMA tuning | ~169 s |
+| + bulk 5000/request & 1 transaction | **~55 s** |
+
+### 19.2 The Speed Key: Batch Your Writes
+
+When many users/processes write **at once**, do not send one `insert` per
+request. The per-request overhead (connection, prepare, commit) costs far
+more than the row itself. **Combine** several rows into one request:
+
+```json
+{ "op": "insert", "table": "log", "data": [
+  { "user": 1, "aksi": "login" },
+  { "user": 2, "aksi": "klik" },
+  { "user": 3, "aksi": "logout" }
+] }
+```
+
+Test with 200 parallel users (Windows, SSD):
+
+| Send style | Rows/sec |
+|---|---|
+| 1 row per request | ~72 |
+| **10 rows per request (batch)** | **~993** |
+
+**~13x faster** just by batching writes.
+
+Practical advice:
+
+- Collect writes for ~50-200 ms, then send them together (batch).
+- For big imports, use `import` (already a single transaction).
+- Reads are unaffected — still parallel via WAL.
+</script>
+
+<script type="text/markdown" id="md-server-en"># Analysis: Servers/Hosting That Can Use TeritipDB
+
+This document analyzes **which server/hosting targets** TeritipDB can run
+on. No assumptions — based on the technical reality of each hosting type.
+
+## 0. The TeritipDB Concept
+
+- Written in **C++** (same style as the `nxc` project).
+- **Not** a desktop app, **not** an upload to a panel.
+- **Installed via npm, one command**:
+
+  ```
+  npm create teritip-app@latest
+  ```
+
+- Once installed, it is used with:
+
+  ```
+  teritip
+  teritip-client '{"op":"select","table":"users"}' --port 7000
+  ```
+
+- Target: **any machine that has a terminal and may run its own processes**
+  (see the table in section 2).
+
+## 1. What TeritipDB Requires
+
+TeritipDB is a **database engine** (like MySQL/MariaDB) with a JSON-based
+API. So, to be usable, the server must be able to:
+
+1. **Run a program process** (the server) that stays alive.
+2. **Store data files** (the data file).
+3. **Accept connections** from clients (over the network or locally).
+
+Point 1 is the **main deciding factor**. Hosting that cannot run its own
+processes (e.g. PHP-only per-request) cannot run the TeritipDB server.
+
+## 2. Range of Server Targets
+
+| Target | Can run processes? | Can run TeritipDB? | Good for |
+|---|---|---|---|
+| Ordinary PC (Windows/Linux/macOS) | Yes | **Yes** | Learning, testing, personal use |
+| VPS / Dedicated Server | Yes, fully | **Yes** | Production, public |
+| Docker (anywhere) | Yes | **Yes** | Production, portable |
+| Shared hosting (cheap cPanel) | No (PHP only) | **No** | — |
+| Shared hosting + Node.js App | Limited | **Sometimes** | Light |
+| CyberPanel / aaPanel (on a VPS) | Yes (has terminal) | **Yes** | Production |
+| cPanel (on a VPS, not shared) | Yes (has terminal) | **Yes** | Production |
+| Serverless (Vercel/Netlify) | No (stateless) | **No** | — |
+| Windows Server | Yes | **Yes** | Production |
+
+## 3. Explanation of Each Target
+
+### 3.1 Ordinary PC (not a server) — YES
+An ordinary PC (Windows, Linux, macOS) can all run TeritipDB, because a PC
+can also run processes and store files. The difference from a server is not
+capability but role:
+
+- **PC**: used by yourself, not always on (turned off when not in use).
+- **Server**: always on, serving many clients.
+
+A real example: a Windows PC like the current one **can already** run
+TeritipDB. Open one terminal for the server (`teritip-server`), open another
+terminal for the client (`teritip-client`). The database is stored as a file
+on that PC.
+
+Limitations of an ordinary PC as a production server:
+- Not on 24 hours (if turned off, clients cannot connect).
+- Usually behind NAT/router, not automatically reachable from the internet
+  without port forwarding.
+
+In short: an ordinary PC = **works** for personal use/testing; to serve the
+public 24 hours, move to a server.
+
+### 3.2 VPS / Dedicated Server — YES
+Your own server, full access. Install a compiler/binary, run TeritipDB as a
+service (systemd on Linux, service/Windows Service on Windows). This is the
+most ideal target.
+
+### 3.3 Docker — YES
+TeritipDB is packaged as an image. It runs consistently anywhere Docker is
+available (local, VPS, cloud). The most portable.
+
+### 3.4 Shared Hosting (cheap cPanel) — NO
+This type of hosting only runs PHP per-request. It may not run long-lived
+processes and there is no access for your own binary. So the TeritipDB
+server cannot run here.
+
+Note: phpMyAdmin can run on cPanel because it **is a PHP application**, not
+a database server. phpMyAdmin is only a tool to *access* MySQL that is
+already running on the server. TeritipDB is different: it **is its own
+server**.
+
+### 3.5 CyberPanel / aaPanel — YES (because VPS-based)
+These panels are installed on a VPS and provide a **terminal** + root access.
+So any process (including TeritipDB) can run, just like on a regular VPS.
+The panel is only a management tool, not a limiter.
+
+### 3.5 cPanel Installed on a VPS — YES
+Different from shared hosting: if cPanel is installed on a full VPS (not a
+sharing package), you have terminal/root access. TeritipDB can run. The key
+is not "cPanel" but **whether you have full process access**.
+
+### 3.6 Serverless — NO
+There is no long-lived process and no persistent storage. TeritipDB needs
+both.
+
+## 4. Conclusion
+
+**TeritipDB can be used anywhere that gives access to run processes and
+store data persistently, including an ordinary PC:**
+
+- Ordinary PC (Windows / Linux / macOS) — personal use & testing
+- VPS / Dedicated Server
+- Docker (anywhere)
+- CyberPanel / aaPanel / cPanel **on top of a VPS**
+- Windows Server
+
+**TeritipDB cannot be used on:**
+
+- Pure shared hosting (PHP only)
+- Serverless (Vercel/Netlify/Cloud Functions)
+
+## 5. What Decides (Summary)
+
+Not the name of the panel, not "server vs PC", but one question:
+
+> **Does the machine allow running its own program/process that stays
+> alive and stores files?**
+
+- **Yes** -> TeritipDB works (including an ordinary PC, including the current PC).
+- **No** -> TeritipDB does not work (shared hosting, serverless).
+
+The difference between a PC and a server is only the **role**: a PC for
+personal use, a server to serve the public 24 hours. The ability to run
+TeritipDB is the same.</script>
+
+<script type="text/markdown" id="md-guide">
+# TeritipDB — Panduan Pengguna
+
+**The database engine that speaks JSON, not SQL.**
+
+TeritipDB adalah mesin database (seperti MySQL/MariaDB), tetapi klien tidak
+menulis SQL — cukup mengirim **JSON**. Data disimpan ke penyimpan internalnya sendiri.
+
+Dokumen ini menjelaskan **cara pasang** dan **cara pakai**.
+
+---
+
+## 0. Prasyarat
+
+Sebelum mulai, pastikan komputer/server sudah punya:
+
+| Prasyarat | Untuk apa | Catatan |
+|---|---|---|
+| **Node.js 18+** (dengan `npm`) | menjalankan `create-teritip-app` (cara install via npm) | unduh di nodejs.org |
+| **`tar`** | untuk mengekstrak paket | sudah bawaan Windows 10+ & Linux |
+| **Compiler C++** | hanya bila mau **build** aplikasi pakai SDK | MSVC 2022 (Windows) / gcc-clang (Linux). **Tidak perlu** bila hanya menjalankan `teritip` |
+
+Cek Node sudah terpasang:
+
+```
+node --version
+npm --version
+```
+
+Bila keduanya menampilkan versi (minimal v18), prasyarat terpenuhi.
+
+> Catatan: `create-teritip-app` **butuh Node.js**. Kalau tidak ingin
+> memasang Node, pakai **Opsi B (dari paket)** di bagian Cara Install —
+> tapi tetap butuh `tar` untuk mengekstrak.
+
+---
+
+## 1. Cara Install
+
+### Opsi A — lewat npm (paling mudah)
+
+```
+npm create teritip-app@latest
+```
+
+Perintah ini:
+- mengunduh TeritipDB (server + client) dari rilis resmi,
+- memasangnya ke folder data pengguna,
+- menambahkannya ke PATH secara otomatis.
+
+Setelah selesai, **buka terminal BARU**, lalu jalankan:
+
+```
+teritip
+```
+
+### Opsi B — dari paket (manual)
+
+1. Unduh paket dari halaman **Releases**.
+2. Ekstrak:
+
+   ```
+   tar -xzf teritip-sdk-<versi>-windows-x64.tar.gz -C teritip-sdk
+   ```
+
+3. Salin isi `teritip-sdk\bin\` (teritip, teritip-server, teritip-client,
+   library) ke folder yang ada di PATH, mis.
+   `%LOCALAPPDATA%\TeritipDB\bin`.
+
+### Lokasi terpasang
+
+- Windows: `%LOCALAPPDATA%\TeritipDB\bin`
+- Linux:   `~/.local/share/TeritipDB` + symlink di `~/.local/bin`
+
+Setelah install, tersedia 3 perintah:
+
+| Perintah | Fungsi |
+|---|---|
+| `teritip` | menu kelola database |
+| `teritip-server` | server database (dijalankan oleh menu) |
+| `teritip-client` | kirim perintah JSON ke server |
+
+---
+
+## 2. Cara Pakai
+
+### Langkah 1 — buka menu
+
+```
+teritip
+```
+
+```
+TERITIPDB
+(NXDOM) Nusantara eXtreme Development Object Model
+Version :v0.9.0
+===================================================
+  Master port: 7000  (global admin)  |  Derived ports: 7001+
+
+  (no databases yet)
+---------------------------------------------------
+  1. Create new database
+  2. Manage database (start/stop/delete)
+  3. Settings (base port)
+  4. Auto-start (ON)
+  5. For developers (API info)
+  6. Master server (global admin)
+  0. Exit
+---------------------------------------------------
+```
+
+### Langkah 2 — buat database
+
+Pilih **1. Create new database**, masukkan nama (mis. `toko`).
+Port diberikan otomatis (7000, 7001, ...). Saat ditanya
+"Start its server now?", jawab **y**.
+
+Setiap database = **satu server dengan port sendiri**. Beberapa database
+bisa jalan bersamaan tanpa saling mengganggu.
+
+Saat dibuat, menu menampilkan **Token** — catat token ini. Anda butuh token
+tersebut untuk mengirim perintah.
+
+### Langkah 3 — kirim perintah
+
+Gunakan `teritip-client` dengan menyebut port database **dan token**:
+
+```
+teritip-client '{"op":"insert","table":"users","data":{"name":"Budi","age":30}}' --port 7000 --token <TOKEN>
+teritip-client '{"op":"select","table":"users"}' --port 7000 --token <TOKEN>
+teritip-client '{"op":"select","table":"users","where":{"age":{">":20}}}' --port 7000 --token <TOKEN>
+```
+
+Contoh balasan:
+
+```json
+{"ok":true,"data":[{"id":1,"name":"Budi","age":30}],"meta":{"count":1,"rowsAffected":1,"lastInsertId":1,"returned":1}}
+```
+
+### Mengelola database
+
+Lewat menu **2. Manage database** → pilih database, lalu:
+
+1. Start — nyalakan server database
+2. Stop — matikan server database
+3. Show tables & columns — lihat daftar tabel + kolomnya
+4. View table data — pratinjau isi tabel (maks. 20 baris)
+5. Backup database — salin file database jadi backup
+6. Token — tampilkan, regenerate, atau atur masa berlaku token
+7. Change port — ganti port database
+8. Manage users (roles) — buat/lihat/ubah/hapus user & perannya
+9. Delete database — hapus database (berkonfirmasi)
+
+### Menu utama lainnya
+
+- **4. Auto-start** — nyalakan otomatis semua database saat komputer menyala
+  (Windows lewat folder Startup, Linux lewat `~/.config/autostart`).
+- **5. For developers (API info)** — ringkasan URL, endpoint, header token,
+  dan contoh `curl` untuk membangun UI/aplikasi sendiri.
+- **6. Master server (global admin)** — server induk di base port untuk
+  admin global (API: `list_databases`, `create_database`, `drop_database`).
+
+### Perintah CLI menu
+
+Menu `teritip` juga bisa dikendalikan dari baris perintah:
+
+```
+teritip status              # lihat daftar database + status
+teritip start <nama>        # nyalakan server database
+teritip stop <nama>         # matikan server database
+teritip start-all           # nyalakan semua database
+teritip stop-all            # matikan semua database
+```
+
+---
+
+## 3. Token & Keamanan
+
+Setiap database punya **token** (awalan `nx_`). Server menolak permintaan
+tanpa token yang benar.
+
+### Opsi klien
+
+```
+--host H     (default 127.0.0.1)
+--port P     (default 7000)
+--token T    (token database, bila server butuh)
+```
+
+### Lewat HTTP
+
+Kirim token sebagai header `Authorization`:
+
+```
+POST http://127.0.0.1:7000/query
+Content-Type: application/json
+Authorization: Bearer <TOKEN>
+
+{ "op": "select", "table": "users" }
+```
+
+Bila token salah atau tidak dikirim, server membalas **401**:
+
+```json
+{"ok":false,"meta":{"error":"unauthorized","message":"invalid or missing token"}}
+```
+
+Token juga bisa punya **masa berlaku**. Bila sudah kedaluwarsa, server
+membalas **401** dengan kode `token_expired`. Atur lewat menu → item
+**6. Token** (regenerate, atau atur berapa hari berlaku / tidak pernah).
+
+> Token tersimpan di file konfigurasi menu. Bila server dijalankan tanpa
+> `--token`, autentikasi dimatikan (khusus pemakaian lokal/dev).
+
+### User & role (opsional)
+
+Satu database bisa punya banyak **user**, masing-masing dengan token dan
+**role** (`read`, `write`, `admin`). Berguna untuk akses terbatas (mis.
+token hanya-baca untuk aplikasi publik). Buka menu → **8. Manage users
+(roles)**. Detail: lihat [Sintaks](#sintaks) bagian **1e**.
+
+### Proteksi brute-force
+
+Server memblokir satu IP **5 menit** bila ada **10 percobaan gagal dalam
+1 menit** (balasan `429 too_many_attempts`). Percobaan sukses mereset
+hitungan.
+
+---
+
+## 4. Pakai dari Postman / aplikasi lain (HTTP)
+
+Server berbicara HTTP, jadi bisa dipakai Postman atau aplikasi apa pun.
+
+- **Method:** `POST`
+- **URL:** `http://127.0.0.1:7000/query`
+- **Header:** `Content-Type: application/json`
+- **Header:** `Authorization: Bearer <TOKEN>` (bila server pakai token)
+- **Body (raw JSON):**
+
+```json
+{ "op": "select", "table": "users" }
+```
+
+Cek server hidup: `GET http://127.0.0.1:7000/health`
+
+---
+
+## 5. Realtime (WebSocket)
+
+Server juga menyediakan endpoint **WebSocket** di `/ws` untuk notifikasi
+perubahan data secara realtime — tidak perlu polling.
+
+### Berlangganan perubahan tabel
+
+Koneksi ke `ws://127.0.0.1:7000/ws?token=<TOKEN>`, lalu kirim:
+
+```json
+{ "subscribe": "users" }
+```
+
+Server membalas `{"type":"subscribed","table":"users"}`. Setiap kali ada
+`insert`, `update`, `delete`, `create_table`, atau `drop_table` pada tabel
+`users`, semua klien yang subscribe akan menerima pesan:
+
+```json
+{"type":"change","op":"insert","table":"users","result":{ ... }}
+```
+
+Kirim `{"unsubscribe":"users"` untuk berhenti. Token bisa dikirim lewat
+query `?token=` atau header `Authorization: Bearer`.
+
+### Perintah teritip-watch
+
+SDK menyertakan tool `teritip-watch` yang mencetak notifikasi perubahan
+tabel langsung di terminal:
+
+```
+teritip-watch users --port 7000 --token <TOKEN>
+```
+
+Setiap insert/update/delete di tabel `users` langsung tercetak (dengan
+stempel waktu) tanpa refresh.
+
+---
+
+## 6. Format Balasan
+
+Semua operasi membalas JSON dengan bentuk:
+
+```json
+{
+  "ok": true,
+  "data": [],
+  "meta": {
+    "count": 0,
+    "rowsAffected": 0,
+    "lastInsertId": 0,
+    "returned": 0
+  }
+}
+```
+
+- `ok` — berhasil atau gagal.
+- `data` — hasil baris (untuk select/join).
+- `meta.rowsAffected` — jumlah baris terpengaruh.
+- `meta.lastInsertId` — id terakhir (untuk insert).
+- `meta.returned` — jumlah baris dikembalikan (bila ada).
+
+---
+
+## 7. Lokasi data
+
+- Windows: `%APPDATA%\TeritipDB\data\<nama>.db`
+- Linux:   `~/.local/share/TeritipDB/<nama>.db`
+
+---
+
+## 8. Sintaks JSON
+
+Sintaks operasi lengkap (insert, update, delete, select, join, tx,
+format `where`, dsb) ada di dokumen [Sintaks](#sintaks).
+</script>
+
+<script type="text/markdown" id="md-guide-en">
+# TeritipDB — User Guide
+
+**The database engine that speaks JSON, not SQL.**
+
+TeritipDB is a database engine (like MySQL/MariaDB), but clients do not
+write SQL — just send **JSON**. Data is stored in its own internal storage.
+
+This document explains **how to install** and **how to use** it.
+
+---
+
+## 0. Prerequisites
+
+Before you start, make sure your computer/server already has:
+
+| Prerequisite | What for | Notes |
+|---|---|---|
+| **Node.js 18+** (with `npm`) | running `create-teritip-app` (the npm install method) | download at nodejs.org |
+| **`tar`** | to extract the package | built into Windows 10+ & Linux |
+| **C++ compiler** | only if you want to **build** an app using the SDK | MSVC 2022 (Windows) / gcc-clang (Linux). **Not needed** if you only run `teritip` |
+
+Check that Node is installed:
+
+```
+node --version
+npm --version
+```
+
+If both show a version (v18 or newer), the prerequisites are met.
+
+> Note: `create-teritip-app` **requires Node.js**. If you don't want to
+> install Node, use **Option B (from the package)** in the Install section —
+> but you still need `tar` to extract.
+
+---
+
+## 1. How to Install
+
+### Option A — via npm (easiest)
+
+```
+npm create teritip-app@latest
+```
+
+This command:
+- downloads TeritipDB (server + client) from the official release,
+- installs it into the user's data folder,
+- adds it to the PATH automatically.
+
+When it finishes, open a NEW terminal, then run:
+
+```
+teritip
+```
+
+### Option B — from the package (manual)
+
+1. Download the package from the **Releases** page.
+2. Extract:
+
+   ```
+   tar -xzf teritip-sdk-<version>-windows-x64.tar.gz -C teritip-sdk
+   ```
+
+3. Copy the contents of `teritip-sdk\bin\` (teritip, teritip-server,
+   teritip-client, library) into a folder that is on your PATH, e.g.
+   `%LOCALAPPDATA%\TeritipDB\bin`.
+
+### Install locations
+
+- Windows: `%LOCALAPPDATA%\TeritipDB\bin`
+- Linux:   `~/.local/share/TeritipDB` + symlink in `~/.local/bin`
+
+After installing, 3 commands are available:
+
+| Command | Function |
+|---|---|
+| `teritip` | database management menu |
+| `teritip-server` | database server (started by the menu) |
+| `teritip-client` | send JSON commands to the server |
+
+---
+
+## 2. How to Use
+
+### Step 1 — open the menu
+
+```
+teritip
+```
+
+```
+TERITIPDB
+(NXDOM) Nusantara eXtreme Development Object Model
+Version :v0.9.0
+===================================================
+  Master port: 7000  (global admin)  |  Derived ports: 7001+
+
+  (no databases yet)
+---------------------------------------------------
+  1. Create new database
+  2. Manage database (start/stop/delete)
+  3. Settings (base port)
+  4. Auto-start (ON)
+  5. For developers (API info)
+  6. Master server (global admin)
+  0. Exit
+---------------------------------------------------
+```
+
+### Step 2 — create a database
+
+Choose **1. Create new database**, enter a name (e.g. `toko`).
+The port is assigned automatically (7000, 7001, ...). When asked
+"Start its server now?", answer **y**.
+
+Every database = **one server with its own port**. Several databases can
+run side by side without interfering with each other.
+
+When created, the menu shows a **Token** — note it down. You need this
+token to send commands.
+
+### Step 3 — send commands
+
+Use `teritip-client`, naming the database port **and the token**:
+
+```
+teritip-client '{"op":"insert","table":"users","data":{"name":"Budi","age":30}}' --port 7000 --token <TOKEN>
+teritip-client '{"op":"select","table":"users"}' --port 7000 --token <TOKEN>
+teritip-client '{"op":"select","table":"users","where":{"age":{">":20}}}' --port 7000 --token <TOKEN>
+```
+
+Example response:
+
+```json
+{"ok":true,"data":[{"id":1,"name":"Budi","age":30}],"meta":{"count":1,"rowsAffected":1,"lastInsertId":1,"returned":1}}
+```
+
+### Managing databases
+
+Via menu **2. Manage database** → pick a database, then:
+
+1. Start — turn the database server on
+2. Stop — turn the database server off
+3. Show tables & columns — list tables + their columns
+4. View table data — preview table rows (max. 20)
+5. Backup database — copy the database file to a backup
+6. Token — show, regenerate, or set the token's expiry
+7. Change port — change the database's port
+8. Manage users (roles) — create/view/change/remove users & their roles
+9. Delete database — delete the database (with confirmation)
+
+### Other main menu items
+
+- **4. Auto-start** — automatically start all databases when the computer boots
+  (Windows via the Startup folder, Linux via `~/.config/autostart`).
+- **5. For developers (API info)** — a summary of the base URL, endpoints,
+  token header, and a `curl` example for building your own UI/app.
+- **6. Master server (global admin)** — the root server on the base port for
+  global admin (API: `list_databases`, `create_database`, `drop_database`).
+
+### Menu CLI commands
+
+The `teritip` menu can also be driven from the command line:
+
+```
+teritip status              # list databases + status
+teritip start <name>        # start a database's server
+teritip stop <name>         # stop a database's server
+teritip start-all           # start all databases
+teritip stop-all            # stop all databases
+```
+
+---
+
+## 3. Token & Security
+
+Every database has a **token** (prefix `nx_`). The server rejects requests
+without the correct token.
+
+### Client options
+
+```
+--host H     (default 127.0.0.1)
+--port P     (default 7000)
+--token T    (database token, if the server requires it)
+```
+
+### Via HTTP
+
+Send the token as an `Authorization` header:
+
+```
+POST http://127.0.0.1:7000/query
+Content-Type: application/json
+Authorization: Bearer <TOKEN>
+
+{ "op": "select", "table": "users" }
+```
+
+If the token is wrong or missing, the server replies **401**:
+
+```json
+{"ok":false,"meta":{"error":"unauthorized","message":"invalid or missing token"}}
+```
+
+A token may also have an **expiry**. Once it expires, the server replies
+**401** with the code `token_expired`. Configure it from the menu → item
+**6. Token** (regenerate, or set how many days it lasts / never).
+
+> The token is stored in the menu's config file. If the server is run
+> without `--token`, authentication is off (for local/dev use only).
+
+### Users & roles (optional)
+
+One database can have many **users**, each with a token and a **role**
+(`read`, `write`, `admin`). Useful for limited access (e.g. a read-only
+token for a public app). Open the menu → **8. Manage users (roles)**.
+Details: see [Syntax](#sintaks) section **1e**.
+
+### Brute-force protection
+
+The server blocks an IP for **5 minutes** after **10 failed attempts in
+1 minute** (reply `429 too_many_attempts`). A successful attempt resets
+the counter.
+
+---
+
+## 4. Using Postman / other apps (HTTP)
+
+The server speaks HTTP, so Postman or any app can be used.
+
+- **Method:** `POST`
+- **URL:** `http://127.0.0.1:7000/query`
+- **Header:** `Content-Type: application/json`
+- **Header:** `Authorization: Bearer <TOKEN>` (if the server uses a token)
+- **Body (raw JSON):**
+
+```json
+{ "op": "select", "table": "users" }
+```
+
+Health check: `GET http://127.0.0.1:7000/health`
+
+---
+
+## 5. Realtime (WebSocket)
+
+The server also exposes a **WebSocket** endpoint at `/ws` for real-time
+data-change notifications — no polling needed.
+
+### Subscribe to table changes
+
+Connect to `ws://127.0.0.1:7000/ws?token=<TOKEN>`, then send:
+
+```json
+{ "subscribe": "users" }
+```
+
+The server replies `{"type":"subscribed","table":"users"}`. Every time
+there's an `insert`, `update`, `delete`, `create_table`, or `drop_table`
+on the `users` table, all subscribed clients receive:
+
+```json
+{"type":"change","op":"insert","table":"users","result":{ ... }}
+```
+
+Send `{"unsubscribe":"users"}` to stop. The token can be sent via the
+`?token=` query or the `Authorization: Bearer` header.
+
+### The teritip-watch command
+
+The SDK includes `teritip-watch`, which prints table-change notifications
+straight to your terminal:
+
+```
+teritip-watch users --port 7000 --token <TOKEN>
+```
+
+Every insert/update/delete on the `users` table is printed (with a
+timestamp) with no refresh needed.
+
+---
+
+## 6. Response Format
+
+All operations reply with JSON in this shape:
+
+```json
+{
+  "ok": true,
+  "data": [],
+  "meta": {
+    "count": 0,
+    "rowsAffected": 0,
+    "lastInsertId": 0,
+    "returned": 0
+  }
+}
+```
+
+- `ok` — success or failure.
+- `data` — result rows (for select/join).
+- `meta.rowsAffected` — number of affected rows.
+- `meta.lastInsertId` — the last id (for insert).
+- `meta.returned` — number of rows returned (if any).
+
+---
+
+## 7. Data location
+
+- Windows: `%APPDATA%\TeritipDB\data\<name>.db`
+- Linux:   `~/.local/share/TeritipDB/<name>.db`
+
+---
+
+## 8. JSON Syntax
+
+The full operation syntax (insert, update, delete, select, join, tx,
+the `where` format, etc.) is in the [Syntax](#sintaks) document.
+</script>
+
+<script type="text/markdown" id="md-clients">
+# TeritipDB — Klien Multi-Bahasa (SDK)
+
+Selain `teritip-client` (C++), TeritipDB menyertakan klien resmi untuk
+bahasa lain. Semuanya bicara ke API yang sama (`POST /`) — tidak perlu
+menulis HTTP manual.
+
+## Bahasa yang didukung
+
+| Bahasa | Berkas | Prasyarat |
+|---|---|---|
+| Python | `clients/python/teritip.py` | Python 3 (modul bawaan) |
+| JavaScript (Node) | `clients/javascript/teritip.js` | Node.js (modul bawaan) |
+| PHP | `clients/php/teritip.php` | PHP + ekstensi curl |
+| React Native | `clients/react-native/teritip-rn.js` | React Native (fetch bawaan) |
+| Go | `clients/go/teritip.go` | Go (pustaka standar) |
+| Java | `clients/java/teritip/TeritipDb.java` | Java (JDK 11+, `java.net.http`) |
+
+Semua klien menyambung ke server TeritipDB yang sedang jalan.
+
+## Python
+
+```python
+from teritip import TeritipDB
+
+db = TeritipDB(port=7000, token="nx_...")
+
+db.insert("users", {"nama": "Budi", "umur": 30})
+rows = db.select("users", where={"umur": {">": 20}})
+db.update("users", {"umur": 31}, where={"nama": "Budi"})
+db.delete("users", where={"nama": "Budi"})
+
+# op bebas (sesuai bagian Sintaks)
+db.query({"op": "show_tables"})
+```
+
+## JavaScript (Node)
+
+```js
+const { TeritipDB } = require("./teritip");
+
+const db = new TeritipDB({ port: 7000, token: "nx_..." });
+
+await db.insert("users", { nama: "Budi", umur: 30 });
+const rows = await db.select("users", { where: { umur: { ">": 20 } } });
+await db.update("users", { umur: 31 }, { where: { nama: "Budi" } });
+await db.delete("users", { where: { nama: "Budi" } });
+```
+
+## PHP
+
+```php
+require "teritip.php";
+
+$db = new TeritipDB("127.0.0.1", 7000, "nx_...");
+
+$db->insert("users", ["nama" => "Budi", "umur" => 30]);
+$rows = $db->select("users", ["where" => ["umur" => [">" => 20]]]);
+$db->update("users", ["umur" => 31], ["where" => ["nama" => "Budi"]]);
+$db->delete("users", ["where" => ["nama" => "Budi"]]);
+```
+
+## React Native (mobile)
+
+```js
+import { TeritipDB } from "./teritip-rn";
+
+const db = new TeritipDB({ host: "10.0.2.2", port: 7000, token: "nx_..." });
+
+await db.insert("users", { nama: "Budi", umur: 30 });
+const rows = await db.select("users", { where: { umur: { ">": 20 } } });
+
+// halaman + meta pagination
+const page = await db.selectPage("users", { limit: 25, after: null });
+// page.meta = { hasMore, next, total }
+
+// realtime
+const ws = db.subscribe("users", (msg) => console.log(msg));
+```
+
+Catatan `host`:
+
+- Emulator Android → `10.0.2.2`
+- Perangkat fisik → IP LAN komputer server (satu Wi-Fi)
+- iOS Simulator → `127.0.0.1`
+- Server pakai HTTP (bukan HTTPS); di Android mungkin perlu
+  `android:usesCleartextTraffic="true"`.
+
+## Go
+
+```go
+import teritip "github.com/iyanrsaleh/teritip-sdk/clients/go"
+
+db := teritip.New("127.0.0.1", 7000, "nx_...")
+
+db.Insert("users", map[string]any{"nama": "Budi", "umur": 30})
+rows, _ := db.Select("users", &teritip.SelectOpts{
+    Where: map[string]any{"umur": map[string]any{">": 20}},
+})
+db.Update("users", map[string]any{"umur": 31}, teritip.Opts{"where": map[string]any{"nama": "Budi"}})
+db.Delete("users", map[string]any{"nama": "Budi"})
+```
+
+Contoh lengkap ada di `clients/go/example/main.go`.
+
+## Java
+
+```java
+import teritip.TeritipDb;
+import teritip.TeritipDb.Opts;
+import java.util.*;
+
+TeritipDb db = new TeritipDb("127.0.0.1", 7001, "nx_token_anda");
+
+db.createTable("users", Map.of("nama", "text", "umur", "integer"));
+db.insert("users", TeritipDb.mapOf("nama", "Budi", "umur", 30));
+
+List<Map<String,Object>> rows = db.select("users",
+        Opts.opts().where(Map.of("umur", Map.of(">", 20))));
+
+db.update("users", TeritipDb.mapOf("umur", 31), "where", Map.of("nama","Budi"));
+db.delete("users", Map.of("nama", "Budi"));
+```
+
+Kompilasi & jalankan:
+
+```bash
+javac -d out teritip/Json.java teritip/TeritipDb.java Example.java
+java -cp out Example
+```
+
+## Fungsi yang tersedia (semua bahasa)
+
+- `insert`, `select`, `update`, `delete`
+- `export`, `import`
+- `show_tables`, `create_index`, `drop_table`
+- `list_databases`, `create_database`, `drop_database`
+- `health`, dan `query()` untuk op bebas
+
+## Catatan
+
+- Semua fungsi error bila balasan `ok=false` (mis. token salah).
+- Sintaks JSON lengkap: lihat [Sintaks](#sintaks).
+</script>
+
+<script type="text/markdown" id="md-clients-en">
+# TeritipDB — Multi-language Clients (SDK)
+
+Besides `teritip-client` (C++), TeritipDB ships official clients for other
+languages. They all talk to the same API (`POST /`) — no manual HTTP
+required.
+
+## Supported languages
+
+| Language | File | Prerequisite |
+|---|---|---|
+| Python | `clients/python/teritip.py` | Python 3 (standard library) |
+| JavaScript (Node) | `clients/javascript/teritip.js` | Node.js (standard library) |
+| PHP | `clients/php/teritip.php` | PHP + curl extension |
+| React Native | `clients/react-native/teritip-rn.js` | React Native (built-in fetch) |
+| Go | `clients/go/teritip.go` | Go (standard library) |
+| Java | `clients/java/teritip/TeritipDb.java` | Java (JDK 11+, `java.net.http`) |
+
+All clients connect to a running TeritipDB server.
+
+## Python
+
+```python
+from teritip import TeritipDB
+
+db = TeritipDB(port=7000, token="nx_...")
+
+db.insert("users", {"nama": "Budi", "umur": 30})
+rows = db.select("users", where={"umur": {">": 20}})
+db.update("users", {"umur": 31}, where={"nama": "Budi"})
+db.delete("users", where={"nama": "Budi"})
+
+# free-form ops (per the Syntax section)
+db.query({"op": "show_tables"})
+```
+
+## JavaScript (Node)
+
+```js
+const { TeritipDB } = require("./teritip");
+
+const db = new TeritipDB({ port: 7000, token: "nx_..." });
+
+await db.insert("users", { nama: "Budi", umur: 30 });
+const rows = await db.select("users", { where: { umur: { ">": 20 } } });
+await db.update("users", { umur: 31 }, { where: { nama: "Budi" } });
+await db.delete("users", { where: { nama: "Budi" } });
+```
+
+## PHP
+
+```php
+require "teritip.php";
+
+$db = new TeritipDB("127.0.0.1", 7000, "nx_...");
+
+$db->insert("users", ["nama" => "Budi", "umur" => 30]);
+$rows = $db->select("users", ["where" => ["umur" => [">" => 20]]]);
+$db->update("users", ["umur" => 31], ["where" => ["nama" => "Budi"]]);
+$db->delete("users", ["where" => ["nama" => "Budi"]]);
+```
+
+## React Native (mobile)
+
+```js
+import { TeritipDB } from "./teritip-rn";
+
+const db = new TeritipDB({ host: "10.0.2.2", port: 7000, token: "nx_..." });
+
+await db.insert("users", { nama: "Budi", umur: 30 });
+const rows = await db.select("users", { where: { umur: { ">": 20 } } });
+
+// page + pagination meta
+const page = await db.selectPage("users", { limit: 25, after: null });
+// page.meta = { hasMore, next, total }
+
+// realtime
+const ws = db.subscribe("users", (msg) => console.log(msg));
+```
+
+`host` notes:
+
+- Android emulator -> `10.0.2.2`
+- Physical device -> the server computer's LAN IP (same Wi-Fi)
+- iOS Simulator -> `127.0.0.1`
+- Server uses HTTP (not HTTPS); on Android you may need
+  `android:usesCleartextTraffic="true"`.
+
+## Go
+
+```go
+import teritip "github.com/iyanrsaleh/teritip-sdk/clients/go"
+
+db := teritip.New("127.0.0.1", 7000, "nx_...")
+
+db.Insert("users", map[string]any{"nama": "Budi", "umur": 30})
+rows, _ := db.Select("users", &teritip.SelectOpts{
+    Where: map[string]any{"umur": map[string]any{">": 20}},
+})
+db.Update("users", map[string]any{"umur": 31}, teritip.Opts{"where": map[string]any{"nama": "Budi"}})
+db.Delete("users", map[string]any{"nama": "Budi"})
+```
+
+A full example is in `clients/go/example/main.go`.
+
+## Java
+
+```java
+import teritip.TeritipDb;
+import teritip.TeritipDb.Opts;
+import java.util.*;
+
+TeritipDb db = new TeritipDb("127.0.0.1", 7001, "nx_token_anda");
+
+db.createTable("users", Map.of("nama", "text", "umur", "integer"));
+db.insert("users", TeritipDb.mapOf("nama", "Budi", "umur", 30));
+
+List<Map<String,Object>> rows = db.select("users",
+        Opts.opts().where(Map.of("umur", Map.of(">", 20))));
+
+db.update("users", TeritipDb.mapOf("umur", 31), "where", Map.of("nama","Budi"));
+db.delete("users", Map.of("nama", "Budi"));
+```
+
+Compile & run:
+
+```bash
+javac -d out teritip/Json.java teritip/TeritipDb.java Example.java
+java -cp out Example
+```
+
+## Available functions (all languages)
+
+- `insert`, `select`, `update`, `delete`
+- `export`, `import`
+- `show_tables`, `create_index`, `drop_table`
+- `list_databases`, `create_database`, `drop_database`
+- `health`, and `query()` for free-form ops
+
+## Notes
+
+- All functions throw an error when the reply is `ok=false` (e.g. wrong token).
+- Full JSON syntax: see [Syntax](#sintaks).
+</script>
+
+<script type="text/markdown" id="md-ai">
+# Pasang TeritipDB lewat AI Agent
+
+Salin salah satu **prompt** di bawah, lalu tempelkan ke AI agent kamu
+(Claude, ChatGPT, Cursor, Copilot, dsb). Agent akan mengerjakan instalasi
+TeritipDB sampai selesai.
+
+## A. Agent terminal (Cursor, Copilot CLI, Claude Code)
+
+Untuk agent yang bisa menjalankan perintah di terminal komputermu:
+
+```
+Pasang TeritipDB di komputer ini.
+1. Cek Node.js 18+ dan npm (node --version, npm --version). Bila belum ada, bantu pasang.
+2. Jalankan: npm create teritip-app@latest
+3. Buka terminal baru, lalu jalankan: teritip
+4. Buat database bernama "demo" (port otomatis), lalu Start servernya.
+5. Uji dengan:
+   teritip-client '{"op":"insert","table":"users","data":{"name":"Budi","age":30}}' --port <port>
+   teritip-client '{"op":"select","table":"users"}' --port <port>
+6. Tampilkan hasilnya dan jelaskan langkah yang sudah dilakukan.
+```
+
+## B. Agent web (chat: Claude, ChatGPT, Gemini)
+
+Untuk agent tanpa akses terminal — agent memandu, kamu yang menjalankan:
+
+```
+Saya mau memasang TeritipDB (database JSON lewat HTTP) di Windows/Linux/macOS.
+Pandu saya langkah demi langkah, satu perintah setiap balasan, dan tunggu
+saya menempelkan hasilnya sebelum lanjut.
+
+Langkah yang saya butuhkan:
+1. Pastikan Node.js 18+ dan npm terpasang.
+2. Jalankan: npm create teritip-app@latest
+3. Buka terminal baru, lalu jalankan: teritip
+4. Buat database "demo" (port otomatis), lalu Start servernya.
+5. Uji dengan teritip-client: insert lalu select pada tabel users.
+Jelaskan singkat fungsi setiap langkah.
+```
+
+## Cara pakai
+
+1. Pilih varian sesuai agent kamu (A atau B).
+2. Salin prompt — klik tombol **Salin** pada kotak di atas.
+3. Tempelkan ke agent, lalu ikuti.
+
+## Catatan
+
+- **Agent terminal** butuh akses shell (bisa menjalankan perintah sendiri).
+- **Agent web** tidak butuh akses shell — kamu yang menjalankan perintahnya.
+- Instalasi resmi tetap lewat `npm create teritip-app@latest`
+  (paket resmi `create-teritip-app`).
+- Sesuaikan `<port>` dengan port yang dilaporkan (default 7000, turunan 7001+).
+- Sintaks JSON lengkap: lihat [Sintaks](#sintaks).
+</script>
+
+<script type="text/markdown" id="md-ai-en">
+# Install TeritipDB via an AI Agent
+
+Copy one of the **prompts** below and paste it into your AI agent
+(Claude, ChatGPT, Cursor, Copilot, etc.). The agent will carry out the
+TeritipDB install for you.
+
+## A. Terminal agent (Cursor, Copilot CLI, Claude Code)
+
+For an agent that can run commands in your terminal:
+
+```
+Install TeritipDB on this computer.
+1. Check Node.js 18+ and npm (node --version, npm --version). If missing, help install it.
+2. Run: npm create teritip-app@latest
+3. Open a new terminal, then run: teritip
+4. Create a database named "demo" (automatic port), then Start its server.
+5. Test with:
+   teritip-client '{"op":"insert","table":"users","data":{"name":"Budi","age":30}}' --port <port>
+   teritip-client '{"op":"select","table":"users"}' --port <port>
+6. Show the results and explain the steps that were taken.
+```
+
+## B. Web agent (chat: Claude, ChatGPT, Gemini)
+
+For an agent without terminal access — it guides, you run the commands:
+
+```
+I want to install TeritipDB (a JSON-over-HTTP database) on Windows/Linux/macOS.
+Guide me step by step, one command per reply, and wait for me to paste the
+output before moving on.
+
+Steps I need:
+1. Make sure Node.js 18+ and npm are installed.
+2. Run: npm create teritip-app@latest
+3. Open a new terminal, then run: teritip
+4. Create a database "demo" (automatic port), then Start its server.
+5. Test with teritip-client: insert then select on the users table.
+Briefly explain what each step does.
+```
+
+## How to use
+
+1. Pick the variant that matches your agent (A or B).
+2. Copy the prompt — click the **Salin**/**Copy** button on the box above.
+3. Paste it into the agent and follow along.
+
+## Notes
+
+- A **terminal agent** needs shell access (it can run commands itself).
+- A **web agent** needs no shell access — you run the commands.
+- The official install is still via `npm create teritip-app@latest`
+  (the official `create-teritip-app` package).
+- Adjust `<port>` to the reported port (default 7000, derived 7001+).
+- Full JSON syntax: see [Syntax](#sintaks).
+</script>
+
+<script type="text/markdown" id="md-dev">
+# Untuk Developer
+
+TeritipDB = **mesin database + API**. Anda membangun UI/aplikasi sendiri
+(web/desktop) yang memanggil API di bawah ini.
+
+## API dasar
+
+- Base URL: `http://127.0.0.1:<port>` (port induk `7000`, turunan `7001+`)
+- Query: `POST /` atau `POST /query`
+- Health: `GET /health`
+- Realtime: `ws://127.0.0.1:<port>/ws?token=<token>`
+
+## Header
+
+Bila server memakai token:
+
+```
+Authorization: Bearer nx_...
+Content-Type: application/json
+```
+
+## Contoh (curl)
+
+```
+curl -X POST http://127.0.0.1:7000/ \
+  -H "Authorization: Bearer nx_..." \
+  -H "Content-Type: application/json" \
+  --data '{"op":"select","table":"users"}'
+```
+
+## Realtime (WebSocket)
+
+Berlangganan perubahan tabel:
+
+```json
+{ "subscribe": "users" }
+```
+
+Terima notifikasi `{"type":"change","op":"insert","table":"users", ...}`.
+
+## Bangun UI sendiri
+
+TeritipDB sengaja **tidak** menyediakan web admin — UI (web/desktop)
+diserahkan penuh ke developer. Pakai klien resmi (Python/JS/PHP) atau HTTP
+dan WebSocket langsung.
+
+- Sintaks JSON lengkap: lihat [Sintaks](#sintaks).
+- Klien resmi: lihat [Klien](#klien).
+- Pagination data besar: cursor `after` (lihat Sintaks bagian 7.1).
+</script>
+
+<script type="text/markdown" id="md-dev-en">
+# For Developers
+
+TeritipDB = **database engine + API**. You build your own UI/app
+(web/desktop) that calls the API below.
+
+## Base API
+
+- Base URL: `http://127.0.0.1:<port>` (root port `7000`, derived `7001+`)
+- Query: `POST /` or `POST /query`
+- Health: `GET /health`
+- Realtime: `ws://127.0.0.1:<port>/ws?token=<token>`
+
+## Header
+
+When the server uses a token:
+
+```
+Authorization: Bearer nx_...
+Content-Type: application/json
+```
+
+## Example (curl)
+
+```
+curl -X POST http://127.0.0.1:7000/ \
+  -H "Authorization: Bearer nx_..." \
+  -H "Content-Type: application/json" \
+  --data '{"op":"select","table":"users"}'
+```
+
+## Realtime (WebSocket)
+
+Subscribe to table changes:
+
+```json
+{ "subscribe": "users" }
+```
+
+Receive notifications `{"type":"change","op":"insert","table":"users", ...}`.
+
+## Build your own UI
+
+TeritipDB deliberately **does not** ship a web admin — the UI (web/desktop)
+is entirely up to developers. Use the official clients (Python/JS/PHP) or
+raw HTTP and WebSocket.
+
+- Full JSON syntax: see [Syntax](#sintaks).
+- Official clients: see [Clients](#klien).
+- Large-data pagination: cursor `after` (see Syntax section 7.1).
+</script>
+
+<script>
+/* ==== Renderer markdown ringan + pemantauan dokumen ==== */
+(function () {
+  "use strict";
+
+  var LINK_MAP = {
+    "Panduan": "#panduan", "Panduan Pengguna": "#panduan", "Guide": "#panduan", "User Guide": "#panduan",
+    "Klien": "#klien", "Clients": "#klien", "SDK": "#klien",
+    "Untuk Developer": "#dev", "For Developers": "#dev", "Developer": "#dev",
+    "Pasang via AI": "#ai", "Install via AI": "#ai",
+    "Ringkasan": "#ringkasan", "Overview": "#ringkasan",
+    "Sintaks": "#sintaks", "Syntax": "#sintaks",
+    "Server": "#server",
+    "README.md": "#ringkasan", "Sintaks.md": "#sintaks", "server.md": "#server",
+    "user-README.md": "#panduan"
+  };
+
+  var DOCS = [
+    { id: "panduan", md: "md-guide", mdEn: "md-guide-en",
+      title: "Panduan", titleEn: "Guide", file: "user-README.md", popular: true,
+      desc: "Cara pakai: install, menu, HTTP, klien.", descEn: "How to use: install, menu, HTTP, client." },
+    { id: "ai", md: "md-ai", mdEn: "md-ai-en",
+      title: "Pasang via AI", titleEn: "Install via AI", file: "AI-INSTALL.md",
+      desc: "Salin prompt, serahkan ke AI agent.", descEn: "Copy a prompt, hand it to an AI agent." },
+    { id: "klien", md: "md-clients", mdEn: "md-clients-en",
+      title: "Klien", titleEn: "Clients", file: "clients/README.md",
+      desc: "Klien resmi Python, JavaScript, PHP.", descEn: "Official Python, JavaScript, PHP clients." },
+    { id: "dev", md: "md-dev", mdEn: "md-dev-en",
+      title: "Untuk Developer", titleEn: "For Developers", file: "DEVELOPERS.md",
+      desc: "API, WebSocket, contoh curl.", descEn: "API, WebSocket, curl examples." },
+    { id: "ringkasan", md: "md-readme",  mdEn: "md-readme-en",
+      title: "Ringkasan", titleEn: "Overview", file: "README.md",
+      desc: "Pengantar, alur, install, target.", descEn: "Intro, flow, install, targets." },
+    { id: "sintaks", md: "md-sintaks", mdEn: "md-sintaks-en",
+      title: "Sintaks", titleEn: "Syntax", file: "Sintaks.md",
+      desc: "Operasi JSON: insert, select, join, tx.", descEn: "JSON ops: insert, select, join, tx." },
+    { id: "server", md: "md-server", mdEn: "md-server-en",
+      title: "Server & Hosting", titleEn: "Server & Hosting", file: "server.md",
+      desc: "Di mana TeritipDB bisa dijalankan.", descEn: "Where TeritipDB can run." }
+  ];
+
+  var I18N = {
+    id: {
+      status: "dokumen tersemat", synced: "sinkron dengan berkas",
+      reload: "Muat ulang", menu: "Menu", langCode: "ID",
+      eyebrow: "\u25CF API berbasis JSON",
+      heroTitle: "Mesin database yang<br>bicara <em>JSON</em>, bukan SQL.",
+      heroLead: "TeritipDB adalah mesin database yang menyimpan data ke penyimpan internalnya sendiri. Klien cukup mengirim JSON sederhana lewat HTTP \u2014 tanpa menulis SQL.",
+      installLbl: "Install lewat npm", runLbl: "Buka menu",
+      flow: "Klien \u2192 (JSON/HTTP) \u2192 teritip-server \u2192 engine internal",
+      homeTitle: "Jelajahi dokumentasi",
+      homeSub: "Pilih bagian di bawah ini untuk memulai dengan TeritipDB.",
+      extraTitle: "Alat & bantuan",
+      extraSub: "Bukan bagian inti dokumentasi \u2014 tetapi memudahkan.",
+      navPanduan: "Panduan", navAI: "Pasang via AI", navKlien: "Klien", navDev: "Untuk Developer", navRingkasan: "Ringkasan", navSintaks: "Sintaks", navServer: "Server & Hosting",
+      hcPanduan: "Cara pasang dan pakai: npm, menu teritip, HTTP, dan klien.",
+      hcAI: "Salin prompt, serahkan ke AI agent untuk memasang TeritipDB.",
+      hcKlien: "Klien resmi untuk Python, JavaScript (Node), dan PHP.",
+      hcDev: "API HTTP, WebSocket, contoh curl, bangun UI sendiri.",
+      hcRingkasan: "Pengantar TeritipDB, alur JSON ke engine, cara install, dan target yang didukung.",
+      hcSintaks: "Semua operasi JSON: insert, update, delete, select, join, tx, where, dan agregat.",
+      hcServer: "Di mana TeritipDB bisa dijalankan: PC, VPS, Docker, panel \u2014 dan yang tidak bisa.",
+      factJson: "JSON", factJsonSub: "Klien kirim JSON, tanpa menulis SQL",
+      factOne: "1 perintah", factOneSub: "<code>npm create teritip-app@latest</code>",
+      factPort: "Portabel", factPortSub: "Satu file data, semua OS",
+      factSchema: "Skema bebas", factSchemaSub: "Tabel & kolom otomatis",
+      docsTitle: "Dokumentasi", footer: "Dokumentasi TeritipDB.",
+      benefitTitle: "Keuntungan memakai TeritipDB",
+      benefitSub: "Sebagai pengguna, kamu dapat:",
+      benefitList: [
+        ["json", "Tanpa menulis SQL", "Kirim JSON sederhana lewat HTTP \u2014 tidak perlu belajar SQL."],
+        ["download", "Install satu perintah", "Cukup <code>npm create teritip-app@latest</code>, jalan di Windows/Linux/macOS."],
+        ["public", "HTTP universal", "Pakai dari aplikasi apa pun \u2014 Postman, curl, browser, bahkan dari aplikasi kamu sendiri."],
+        ["grid", "Skema bebas", "Tabel & kolom dibuat otomatis saat insert pertama \u2014 tidak perlu migrasi."],
+        ["server", "Banyak database", "Kelola banyak database; tiap database satu port sendiri, tidak saling ganggu."],
+        ["shield", "Aman dengan token", "Tiap database punya token otomatis; server menolak permintaan tanpa token."],
+        ["file", "Isolasi & data file", "Satu database = satu file. Backup mudah, tidak bergantung layanan cloud."],
+        ["desktop", "Ringan & offline", "Berjalan lokal di mesin kamu \u2014 data tidak keluar dari server sendiri."],
+        ["code", "SDK untuk developer", "Bisa dipakai langsung dari C++ (embedded) atau lewat HTTP dari bahasa apa pun."],
+        ["tools", "Menu kelola praktis", "Buat, start, stop, backup, dan hapus database lewat menu <code>teritip</code>."],
+        ["rocket", "Mulai dalam hitungan detik", "Tanpa setup server terpisah \u2014 install, buat database, langsung kirim JSON."],
+        ["savings", "Gratis & tanpa langganan", "Tidak ada biaya bulanan atau layanan cloud; jalankan di mesin/servermu sendiri."]
+      ],
+      popular: "populer", tocTitle: "Daftar Item", find: "Cari item...",
+      prev: "Sebelumnya", next: "Berikutnya", back: "Beranda", beranda: "Beranda",
+      copy: "Salin", copied: "Tersalin", copyFail: "Gagal",
+      metaLines: "baris", metaItems: "item", built: "Dibangun", syncedOn: "Disinkronkan"
+    },
+    en: {
+      status: "embedded document", synced: "synced with files",
+      reload: "Reload", menu: "Menu", langCode: "EN",
+      eyebrow: "\u25CF JSON-based API",
+      heroTitle: "The database engine<br>that speaks <em>JSON</em>, not SQL.",
+      heroLead: "TeritipDB is a database engine that stores data in its own internal storage. Clients just send simple JSON over HTTP \u2014 without writing SQL.",
+      installLbl: "Install via npm", runLbl: "Open menu",
+      flow: "Client \u2192 (JSON/HTTP) \u2192 teritip-server \u2192 internal engine",
+      homeTitle: "Explore the docs",
+      homeSub: "Pick a section below to get started with TeritipDB.",
+      extraTitle: "Tools & help",
+      extraSub: "Not core documentation \u2014 but they make things easier.",
+      navPanduan: "Guide", navAI: "Install via AI", navKlien: "Clients", navDev: "For Developers", navRingkasan: "Overview", navSintaks: "Syntax", navServer: "Server & Hosting",
+      hcPanduan: "How to install and use: npm, the teritip menu, HTTP, and the client.",
+      hcAI: "Copy a prompt and hand it to an AI agent to install TeritipDB.",
+      hcKlien: "Official clients for Python, JavaScript (Node), and PHP.",
+      hcDev: "HTTP API, WebSocket, curl example, build your own UI.",
+      hcRingkasan: "Intro to TeritipDB, the JSON-to-engine flow, install, and supported targets.",
+      hcSintaks: "Every JSON operation: insert, update, delete, select, join, tx, where, and aggregates.",
+      hcServer: "Where TeritipDB can run: PC, VPS, Docker, panels \u2014 and where it can't.",
+      factJson: "JSON", factJsonSub: "Clients send JSON, no SQL",
+      factOne: "1 command", factOneSub: "<code>npm create teritip-app@latest</code>",
+      factPort: "Portable", factPortSub: "One data file, all OSes",
+      factSchema: "Schema-free", factSchemaSub: "Tables & columns automatic",
+      docsTitle: "Documentation", footer: "TeritipDB documentation.",
+      benefitTitle: "Why use TeritipDB",
+      benefitSub: "As a user, you get:",
+      benefitList: [
+        ["json", "No SQL required", "Send simple JSON over HTTP \u2014 no need to learn SQL."],
+        ["download", "One-command install", "Just <code>npm create teritip-app@latest</code>; runs on Windows/Linux/macOS."],
+        ["public", "Universal HTTP", "Use it from any app \u2014 Postman, curl, browser, or your own app."],
+        ["grid", "Schema-free", "Tables & columns are created on the first insert \u2014 no migrations."],
+        ["server", "Many databases", "Manage many databases; each gets its own port, no interference."],
+        ["shield", "Token-secured", "Every database has an automatic token; the server rejects requests without it."],
+        ["file", "Isolated data files", "One database = one file. Easy backup, no cloud lock-in."],
+        ["desktop", "Light & offline", "Runs locally on your machine \u2014 data never leaves your own server."],
+        ["code", "SDK for developers", "Use it directly from C++ (embedded) or over HTTP from any language."],
+        ["tools", "Handy management menu", "Create, start, stop, backup, and delete databases via the <code>teritip</code> menu."],
+        ["rocket", "Start in seconds", "No separate server setup \u2014 install, create a database, and send JSON right away."],
+        ["savings", "Free & no subscription", "No monthly fees or cloud services; run it on your own machine/server."]
+      ],
+      popular: "popular", tocTitle: "Items", find: "Search items...",
+      prev: "Previous", next: "Next", back: "Home", beranda: "Home",
+      copy: "Copy", copied: "Copied", copyFail: "Failed",
+      metaLines: "lines", metaItems: "items", built: "Built", syncedOn: "Synced"
+    }
+  };
+
+  var LANG = "id";
+  try { var _ls = localStorage.getItem("teritip-lang"); if (_ls === "en" || _ls === "id") LANG = _ls; } catch (e) {}
+  function T(k) { return I18N[LANG][k]; }
+  function docTitle(d) { return d ? (LANG === "en" ? d.titleEn : d.title) : ""; }
+  function docDesc(d) { return d ? (LANG === "en" ? d.descEn : d.desc) : ""; }
+  function locale() { return LANG === "en" ? "en-US" : "id-ID"; }
+
+  function esc(s) {
+    return String(s).replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;");
+  }
+
+  /* Ikon inline gaya Google Material Symbols (SVG, tanpa dependensi luar). */
+  var ICONS = {
+    json: "M560-160v-80h120q17 0 28.5-11.5T720-280v-80q0-38 22-69t58-44v-14q-36-13-58-44t-22-69v-80q0-17-11.5-28.5T680-720H560v-80h120q50 0 85 35t35 85v80q0 17 11.5 28.5T840-560h40v160h-40q-17 0-28.5 11.5T800-360v80q0 50-35 85t-85 35H560Zm-280 0q-50 0-85-35t-35-85v-80q0-17-11.5-28.5T120-400H80v-160h40q17 0 28.5-11.5T160-600v-80q0-50 35-85t85-35h120v80H280q-17 0-28.5 11.5T240-680v80q0 38-22 69t-58 44v14q36 13 58 44t22 69v80q0 17 11.5 28.5T280-240h120v80H280Z",
+    download: "M280-280h400v-80H280v80Zm200-120 160-160-56-56-64 62v-166h-80v166l-64-62-56 56 160 160Zm0 320q-83 0-156-31.5T197-197q-54-54-85.5-127T80-480q0-83 31.5-156T197-763q54-54 127-85.5T480-880q83 0 156 31.5T763-763q54 54 85.5 127T880-480q0 83-31.5 156T763-197q-54 54-127 85.5T480-80Zm0-80q134 0 227-93t93-227q0-134-93-227t-227-93q-134 0-227 93t-93 227q0 134 93 227t227 93Zm0-320Z",
+    public: "M324-111.5Q251-143 197-197t-85.5-127Q80-397 80-480t31.5-156Q143-709 197-763t127-85.5Q397-880 480-880t156 31.5Q709-817 763-763t85.5 127Q880-563 880-480t-31.5 156Q817-251 763-197t-127 85.5Q563-80 480-80t-156-31.5ZM440-162v-78q-33 0-56.5-23.5T360-320v-40L168-552q-3 18-5.5 36t-2.5 36q0 121 79.5 212T440-162Zm276-102q41-45 62.5-100.5T800-480q0-98-54.5-179T600-776v16q0 33-23.5 56.5T520-680h-80v80q0 17-11.5 28.5T400-560h-80v80h240q17 0 28.5 11.5T600-440v120h40q26 0 47 15.5t29 40.5Z",
+    grid: "M120-520v-320h320v320H120Zm0 400v-320h320v320H120Zm400-400v-320h320v320H520Zm0 400v-320h320v320H520ZM200-600h160v-160H200v160Zm400 0h160v-160H600v160Zm0 400h160v-160H600v160Zm-400 0h160v-160H200v160Zm400-400Zm0 240Zm-240 0Zm0-240Z",
+    server: "M300-720q-25 0-42.5 17.5T240-660q0 25 17.5 42.5T300-600q25 0 42.5-17.5T360-660q0-25-17.5-42.5T300-720Zm0 400q-25 0-42.5 17.5T240-260q0 25 17.5 42.5T300-200q25 0 42.5-17.5T360-260q0-25-17.5-42.5T300-320ZM160-840h640q17 0 28.5 11.5T840-800v280q0 17-11.5 28.5T800-480H160q-17 0-28.5-11.5T120-520v-280q0-17 11.5-28.5T160-840Zm40 80v200h560v-200H200Zm-40 320h640q17 0 28.5 11.5T840-400v280q0 17-11.5 28.5T800-80H160q-17 0-28.5-11.5T120-120v-280q0-17 11.5-28.5T160-440Zm40 80v200h560v-200H200Z",
+    shield: "M480-80q-139-35-229.5-159.5T160-516v-244l320-120 320 120v244q0 152-90.5 276.5T480-80Zm0-84q104-33 172-132t68-220v-189l-240-90-240 90v189q0 121 68 220t172 132Zm0-316Z",
+    file: "M320-240h320v-80H320v80Zm0-160h320v-80H320v80ZM240-80q-33 0-56.5-23.5T160-160v-640q0-33 23.5-56.5T240-880h320l240 240v480q0 33-23.5 56.5T720-80H240Zm280-520v-200H240v640h480v-440H520Z",
+    desktop: "M40-120v-80h880v80H40Zm120-120q-33 0-56.5-23.5T80-320v-440q0-33 23.5-56.5T160-840h640q33 0 56.5 23.5T880-760v440q0 33-23.5 56.5T800-240H160Zm0-80h640v-440H160v440Z",
+    code: "M320-240 80-480l240-240 57 57-184 184 183 183-56 56Zm320 0-57-57 184-184-183-183 56-56 240 240-240 240Z",
+    tools: "M686-132 444-376q-20 8-40.5 12t-43.5 4q-100 0-170-70t-70-170q0-36 10-68.5t28-61.5l146 146 72-72-146-146q29-18 61.5-28t68.5-10q100 0 170 70t70 170q0 23-4 43.5T584-516l244 242q12 12 12 29t-12 29l-84 84q-12 12-29 12t-29-12Zm29-85 27-27-256-256q18-20 26-46.5t8-53.5q0-60-38.5-104.5T386-758l74 74q12 12 12 28t-12 28L332-500q-12 12-28 12t-28-12l-74-74q9 57 53.5 95.5T360-440q26 0 52-8t47-25l256 256ZM472-488Z",
+    rocket: "m226-559 78 33q14-28 29-54t33-52l-56-11-84 84Zm142 83 114 113q42-16 90-49t90-75q70-70 109.5-155.5T806-800q-72-5-158 34.5T492-656q-42 42-75 90t-49 90Zm155-121.5q0-33.5 23-56.5t57-23q34 0 57 23t23 56.5q0 33.5-23 56.5t-57 23q-34 0-57-23t-23-56.5ZM565-220l84-84-11-56q-26 18-52 32.5T532-299l33 79Zm313-653q19 121-23.5 235.5T708-419l20 99q4 20-2 39t-20 33L538-80l-84-197-171-171-197-84 167-168q14-14 33.5-20t39.5-2l99 20q104-104 218-147t235-24ZM157-321q35-35 85.5-35.5T328-322q35 35 34.5 85.5T327-151q-25 25-83.5 43T82-76q14-103 32-161.5t43-83.5Zm57 56q-10 10-20 36.5T180-175q27-4 53.5-13.5T270-208q12-12 13-29t-11-29q-12-12-29-11.5T214-265Z",
+    savings: "M668.5-531.5Q680-543 680-560t-11.5-28.5Q657-600 640-600t-28.5 11.5Q600-577 600-560t11.5 28.5Q623-520 640-520t28.5-11.5ZM320-600h200v-80H320v80ZM180-120q-34-114-67-227.5T80-580q0-92 64-156t156-64h200q29-38 70.5-59t89.5-21q25 0 42.5 17.5T720-820q0 6-1.5 12t-3.5 11q-4 11-7.5 22.5T702-751l91 91h87v279l-113 37-67 224H480v-80h-80v80H180Zm60-80h80v-80h240v80h80l62-206 98-33v-141h-40L620-720q0-20 2.5-38.5T630-796q-29 8-51 27.5T547-720H300q-58 0-99 41t-41 99q0 98 27 191.5T240-200Z",
+    book: "M560-564v-68q33-14 67.5-21t72.5-7q26 0 51 4t49 10v64q-24-9-48.5-13.5T700-600q-38 0-73 9.5T560-564Zm0 220v-68q33-14 67.5-21t72.5-7q26 0 51 4t49 10v64q-24-9-48.5-13.5T700-380q-38 0-73 9t-67 27Zm0-110v-68q33-14 67.5-21t72.5-7q26 0 51 4t49 10v64q-24-9-48.5-13.5T700-490q-38 0-73 9.5T560-454ZM260-320q47 0 91.5 10.5T440-278v-394q-41-24-87-36t-93-12q-36 0-71.5 7T120-692v396q35-12 69.5-18t70.5-6Zm260 42q44-21 88.5-31.5T700-320q36 0 70.5 6t69.5 18v-396q-33-14-68.5-21t-71.5-7q-47 0-93 12t-87 36v394Zm-40 118q-48-38-104-59t-116-21q-42 0-82.5 11T100-198q-21 11-40.5-1T40-234v-482q0-11 5.5-21T62-752q46-24 96-36t102-12q58 0 113.5 15T480-740q51-30 106.5-45T700-800q52 0 102 12t96 36q11 5 16.5 15t5.5 21v482q0 23-19.5 35t-40.5 1q-37-20-77.5-31T700-240q-60 0-116 21t-104 59Z",
+    article: "M280-280h280v-80H280v80Zm0-160h400v-80H280v80Zm0-160h400v-80H280v80Zm-80 480q-33 0-56.5-23.5T120-200v-560q0-33 23.5-56.5T200-840h560q33 0 56.5 23.5T840-760v560q0 33-23.5 56.5T760-120H200Z",
+    blocks: "m384-336 56-57-87-87 87-87-56-57-144 144 144 144Zm192 0 144-144-144-144-56 57 87 87-87 87 56 57ZM200-120q-33 0-56.5-23.5T120-200v-560q0-33 23.5-56.5T200-840h560q33 0 56.5 23.5T840-760v560q0 33-23.5 56.5T760-120H200Z",
+    menu: "M480-160q-134 0-227-93t-93-227q0-134 93-227t227-93q69 0 132 28.5T720-690v-110h80v280H520v-80h168q-32-56-87.5-88T480-720q-100 0-170 70t-70 170q0 100 70 170t170 70q77 0 139-44t87-116h84q-28 106-114 173t-196 67Z",
+    lang: "M325-111.5q-73-31.5-127.5-86t-86-127.5Q80-398 80-480.5t31.5-155q31.5-72.5 86-127t127.5-86Q398-880 480.5-880t155 31.5q72.5 31.5 127 86t86 127Q880-563 880-480.5T848.5-325q-31.5 73-86 127.5t-127 86Q563-80 480.5-80T325-111.5ZM480-162q26-36 45-75t31-83H404q12 44 31 83t45 75Zm-104-16q-18-33-31.5-68.5T322-320H204q29 50 72.5 87t99.5 55Zm208 0q56-18 99.5-55t72.5-87H638q-9 38-22.5 73.5T584-178ZM170-400h136q-3-20-4.5-39.5T300-480q0-21 1.5-40.5T306-560H170q-5 20-7.5 39.5T160-480q0 21 2.5 40.5T170-400Zm216 0h188q3-20 4.5-39.5T580-480q0-21-1.5-40.5T574-560H386q-3 20-4.5 39.5T380-480q0 21 1.5 40.5T386-400Zm268 0h136q5-20 7.5-39.5T800-480q0-21-2.5-40.5T790-560H654q3 20 4.5 39.5T660-480q0 21-1.5 40.5T654-400Zm-16-240h118q-29-50-72.5-87T584-782q18 33 31.5 68.5T638-640Zm-234 0h152q-12-44-31-83t-45-75q-26 36-45 75t-31 83Zm-200 0h118q9-38 22.5-73.5T376-782q-56 18-99.5 55T204-640Z"
+  };
+  function icon(name, size) {
+    var s = size || 18;
+    return '<svg viewBox="0 -960 960 960" width="' + s + '" height="' + s +
+      '" fill="currentColor" aria-hidden="true"><path d="' + (ICONS[name] || ICONS.json) + '"/></svg>';
+  }
+
+  function inline(t) {
+    t = esc(t);
+    t = t.replace(/`([^`]+)`/g, function (m, c) { return "<code>" + c + "</code>"; });
+    t = t.replace(/\*\*([^*]+)\*\*/g, "<strong>$1</strong>");
+    t = t.replace(/(^|[^*\w])\*([^*\n]+)\*(?!\*)/g, "$1<em>$2</em>");
+    t = t.replace(/\[([^\]]+)\]\(([^)\s]+)\)/g, function (m, txt, url) {
+      if (url.charAt(0) === "#" || url.charAt(0) === "/") return '<a href="' + url + '">' + txt + "</a>";
+      var key = url.replace(/^\.\//, "");
+      if (LINK_MAP[key]) return '<a href="' + LINK_MAP[key] + '">' + txt + "</a>";
+      return '<a href="' + url + '" target="_blank" rel="noopener">' + txt + "</a>";
+    });
+    return t;
+  }
+
+  /* Sembunyikan detail internal (nama mesin penyimpan) dari publik. */
+  var _E = "SQL" + "ite", _P = "PRAG" + "MA", _V = "VAC" + "UUM", _L = "sql" + "ite";
+  var INTERNAL = [
+    [new RegExp("`" + _P + " journal_mode=WAL` dan `" + _P + " foreign_keys=ON`", "g"), "mode jurnal WAL dan jaminan integritas relasi"],
+    [new RegExp("`" + _V + " INTO 'backup\\.db'` \\(aman untuk WAL\\)", "g"), "snapshot backup (aman untuk WAL)"],
+    [new RegExp("operasi " + _E, "g"), "operasi engine"],
+    [new RegExp("file " + _E, "g"), "file penyimpanan"],
+    [new RegExp("Format " + _E, "g"), "Format penyimpanan"],
+    [new RegExp("di " + _E, "g"), "di engine internal"],
+    [new RegExp("ke " + _E, "g"), "ke penyimpan internal"],
+    [new RegExp(_E + " mengisinya", "g"), "engine mengisinya"],
+    [new RegExp(_E + " tidak punya", "g"), "engine tidak punya"],
+    [new RegExp(_E + " amalgamation", "g"), "komponen internal"],
+    [new RegExp("\\b" + _E + "\\b", "g"), "engine internal"],
+    [new RegExp(_L + "_", "g"), "internal_"],
+    [new RegExp(_L + "3\\/", "g"), "internal/"],
+    [new RegExp("\\b" + _L + "\\b", "g"), "internal"]
+  ];
+  function publicize(t) {
+    t = t.replace(/user-README\.md/g, docTitle(byId("panduan")))
+         .replace(/README\.md/g, docTitle(byId("ringkasan")))
+         .replace(/Sintaks\.md/g, docTitle(byId("sintaks")))
+         .replace(/server\.md/g, docTitle(byId("server")));
+    INTERNAL.forEach(function (p) { t = t.replace(p[0], p[1]); });
+    return t;
+  }
+
+  function slug(s) {
+    return s.toLowerCase().replace(/[`*]/g, "").replace(/[^a-z0-9]+/g, "-").replace(/^-+|-+$/g, "").slice(0, 60) || "sec";
+  }
+
+  var used = {};
+  function uid(s) {
+    var b = slug(s);
+    if (!used[b]) { used[b] = 1; return b; }
+    used[b] += 1;
+    return b + "-" + used[b];
+  }
+
+  function isLi(l) { return /^(\s*)([-*+]|\d+\.)\s+/.test(l); }
+
+  function cellAlign(sep) {
+    if (/^:-+:$/.test(sep)) return "center";
+    if (/:$/.test(sep)) return "right";
+    return "left";
+  }
+
+  function renderTable(block) {
+    function cells(line) {
+      return line.trim().replace(/^\|/, "").replace(/\|$/, "").split("|").map(function (s) { return s.trim(); });
+    }
+    var header = cells(block[0]);
+    var aligns = cells(block[1]).map(cellAlign);
+    var h = '<div class="table-wrap"><table><thead><tr>';
+    header.forEach(function (c, i) { h += '<th style="text-align:' + (aligns[i] || "left") + '">' + inline(c) + "</th>"; });
+    h += "</tr></thead><tbody>";
+    for (var r = 2; r < block.length; r++) {
+      var row = cells(block[r]);
+      h += "<tr>";
+      header.forEach(function (_, i) { h += '<td style="text-align:' + (aligns[i] || "left") + '">' + inline(row[i] || "") + "</td>"; });
+      h += "</tr>";
+    }
+    return h + "</tbody></table></div>";
+  }
+
+  function buildListTree(items) {
+    var nodes = [], i = 0;
+    while (i < items.length) {
+      var it = items[i];
+      var kids = [], j = i + 1;
+      while (j < items.length && items[j].indent > it.indent) { kids.push(items[j]); j++; }
+      it.children = buildListTree(kids);
+      nodes.push(it);
+      i = kids.length ? j : i + 1;
+    }
+    return nodes;
+  }
+
+  function renderListTree(nodes) {
+    if (!nodes.length) return "";
+    var ordered = nodes[0].ordered;
+    var h = ordered ? "<ol>" : "<ul>";
+    nodes.forEach(function (n) {
+      h += "<li>" + inline(n.text);
+      if (n.children.length) h += renderListTree(n.children);
+      h += "</li>";
+    });
+    return h + (ordered ? "</ol>" : "</ul>");
+  }
+
+  function mdToHtml(md) {
+    var lines = String(md).replace(/\r\n?/g, "\n").split("\n");
+    var n = lines.length, i = 0, out = [];
+    function blank(l) { return /^\s*$/.test(l); }
+    function isTableStart(idx) {
+      return lines[idx].indexOf("|") >= 0 && idx + 1 < n &&
+        /^\s*\|?[\s:|-]+\|?\s*$/.test(lines[idx + 1]) && lines[idx + 1].indexOf("-") >= 0;
+    }
+    function isBlock(l, idx) {
+      if (blank(l)) return true;
+      if (/^```/.test(l)) return true;
+      if (/^#{1,6}\s+/.test(l)) return true;
+      if (/^\s*---+\s*$/.test(l)) return true;
+      if (isLi(l)) return true;
+      if (/^\s*>/.test(l)) return true;
+      if (isTableStart(idx)) return true;
+      return false;
+    }
+    while (i < n) {
+      var line = lines[i];
+      if (blank(line)) { i++; continue; }
+
+      var fm = line.match(/^```(\w*)\s*$/);
+      if (fm) {
+        var code = []; i++;
+        while (i < n && !/^```\s*$/.test(lines[i])) { code.push(lines[i]); i++; }
+        i++;
+        var lang = fm[1] ? ' class="lang-' + fm[1].toLowerCase() + '"' : "";
+        out.push('<pre class="code"><code' + lang + ">" + esc(code.join("\n")) + "\n</code></pre>");
+        continue;
+      }
+
+      var hm = line.match(/^(#{1,6})\s+(.*)$/);
+      if (hm) {
+        var lvl = hm[1].length, txt = hm[2], id = uid(txt);
+        out.push("<h" + lvl + ' id="' + id + '">' + inline(txt) + "</h" + lvl + ">");
+        i++; continue;
+      }
+
+      if (/^\s*---+\s*$/.test(line)) { out.push("<hr>"); i++; continue; }
+
+      if (isTableStart(i)) {
+        var block = [];
+        while (i < n && lines[i].indexOf("|") >= 0 && !blank(lines[i])) { block.push(lines[i]); i++; }
+        out.push(renderTable(block));
+        continue;
+      }
+
+      if (isLi(line)) {
+        var items = [];
+        while (i < n && isLi(lines[i])) {
+          var m = lines[i].match(/^(\s*)([-*+]|\d+\.)\s+(.*)$/);
+          items.push({ indent: m[1].length, ordered: /^\d/.test(m[2]), text: m[3] });
+          i++;
+        }
+        out.push(renderListTree(buildListTree(items)));
+        continue;
+      }
+
+      if (/^\s*>/.test(line)) {
+        var buf = [];
+        while (i < n && /^\s*>/.test(lines[i])) { buf.push(lines[i].replace(/^\s*>\s?/, "")); i++; }
+        out.push("<blockquote>" + mdToHtml(buf.join("\n")) + "</blockquote>");
+        continue;
+      }
+
+      var para = [];
+      while (i < n && !isBlock(lines[i], i)) { para.push(lines[i]); i++; }
+      out.push("<p>" + inline(para.join("\n")) + "</p>");
+    }
+    return out.join("\n");
+  }
+
+
+  /* ---------- build UI ---------- */
+  var nav = document.getElementById("nav");
+  var content = document.getElementById("content");
+  var buildInfo = document.getElementById("buildInfo");
+  var hero = document.getElementById("beranda");
+  var home = document.getElementById("home");
+  var docsWrap = document.getElementById("docsWrap");
+
+  var navIndex = {};
+  var docEls = {};
+  var active = { id: null, idx: 0 };
+
+  function byId(id) {
+    for (var i = 0; i < DOCS.length; i++) if (DOCS[i].id === id) return DOCS[i];
+    return null;
+  }
+
+  /* Pisahkan dokumen: lead (sebelum ##) + daftar item (tiap ##). */
+  function splitDoc(md) {
+    var lines = String(md).replace(/\r\n?/g, "\n").split("\n");
+    var lead = [], raw = [], cur = null;
+    lines.forEach(function (l) {
+      if (/^##\s+/.test(l)) { cur = { head: l, body: [] }; raw.push(cur); }
+      else if (cur) cur.body.push(l);
+      else lead.push(l);
+    });
+    var out = { lead: mdToHtml(lead.join("\n")), items: [] };
+    raw.forEach(function (it, idx) {
+      var title = it.head.replace(/^#+\s*/, "").trim();
+      var num = (title.match(/^(\d+)\./) || [])[1] || String(idx + 1);
+      var label = title.replace(/^\d+\.\s*/, "").replace(/[`*]/g, "").trim();
+      out.items.push({ num: num, label: label, html: mdToHtml(it.head + "\n" + it.body.join("\n")) });
+    });
+    return out;
+  }
+
+  function hide(el, h) { if (el) el.hidden = !!h; }
+
+  var KW = "SELECT|FROM|WHERE|INSERT|INTO|VALUES|UPDATE|SET|DELETE|CREATE|TABLE|IF|NOT|EXISTS|ALTER|ADD|COLUMN|INTEGER|REAL|TEXT|PRIMARY|KEY|AUTOINCREMENT|NULL|AND|OR|IN|LIKE|IS|JOIN|LEFT|RIGHT|INNER|FULL|OUTER|GROUP|BY|ORDER|ASC|DESC|LIMIT|OFFSET|COUNT|SUM|AVG|MIN|MAX|AS|PRAGMA|VACUUM|DISTINCT|DEFAULT|BEGIN|COMMIT|ROLLBACK|true|false|null";
+  var TOKEN = new RegExp(
+    "(\\/\\*[\\s\\S]*?\\*\\/|\\/\\/[^\\n]*|#[^\\n]*)"
+    + '|("(?:[^"\\\\]|\\\\.)*"(?=\\s*:))'
+    + '|("(?:[^"\\\\]|\\\\.)*"|\'(?:[^\'\\\\]|\\\\.)*\')'
+    + "|(\\b\\d+(?:\\.\\d+)?\\b)"
+    + "|(\\b(?:" + KW + ")\\b)", "gi");
+
+  function highlightCode(codeEl) {
+    var code = codeEl.textContent, out = "", last = 0, m;
+    while ((m = TOKEN.exec(code))) {
+      if (m.index > last) out += esc(code.slice(last, m.index));
+      var cls = m[1] ? "c-com" : m[2] ? "c-key" : m[3] ? "c-str" : m[4] ? "c-num" : "c-kw";
+      out += '<span class="' + cls + '">' + esc(m[0]) + "</span>";
+      last = m.index + m[0].length;
+    }
+    if (last < code.length) out += esc(code.slice(last));
+    codeEl.innerHTML = out;
+  }
+
+  function highlightAll(root) {
+    if (!root || !root.querySelectorAll) return;
+    Array.prototype.forEach.call(root.querySelectorAll("pre.code code"), function (c) {
+      if (c.__hl) return;
+      highlightCode(c);
+      c.__hl = true;
+    });
+  }
+
+  function enhanceLead(root) {
+    if (!root || !root.querySelectorAll) return;
+    highlightAll(root);
+    Array.prototype.forEach.call(root.querySelectorAll("pre.code"), function (pre) {
+      var b = document.createElement("button");
+      b.className = "copy"; b.type = "button"; b.textContent = T("copy");
+      b.addEventListener("click", function () {
+        var code = pre.querySelector("code").innerText;
+        var pr = navigator.clipboard ? navigator.clipboard.writeText(code) : Promise.reject();
+        pr.then(function () { b.textContent = T("copied"); setTimeout(function () { b.textContent = T("copy"); }, 1200); })
+          .catch(function () { b.textContent = T("copyFail"); });
+      });
+      pre.appendChild(b);
+    });
+  }
+
+  function setActive(id) {
+    Object.keys(navIndex).forEach(function (k) { navIndex[k].classList.toggle("active", k === id); });
+  }
+
+  function setItem(d, idx) {
+    var items = d.parsed.items;
+    if (!items.length) return;
+    if (idx < 0) idx = 0;
+    if (idx >= items.length) idx = items.length - 1;
+    active.id = d.id; active.idx = idx;
+
+    var art = docEls[d.id];
+    var view = art.querySelector(".doc-view");
+    if (view) view.innerHTML = items[idx].html;
+
+    Array.prototype.forEach.call(art.querySelectorAll(".toc-grid a"), function (a, i) {
+      a.classList.toggle("active", i === idx);
+    });
+
+    var sub = navIndex[d.id + "-sub"];
+    if (sub && sub.querySelectorAll) {
+      Array.prototype.forEach.call(sub.querySelectorAll("a"), function (s, i) {
+        s.classList.toggle("active", i === idx);
+      });
+    }
+
+    var pager = art.querySelector(".doc-pager");
+    if (pager) {
+      pager.innerHTML =
+        '<button class="btn pager-btn" data-nav="prev"' + (idx === 0 ? " disabled" : "") + ">&larr; " + T("prev") + "</button>" +
+        '<span class="pager-label">' + (idx + 1) + " / " + items.length + " &middot; " + esc(items[idx].label) + "</span>" +
+        '<button class="btn pager-btn" data-nav="next"' + (idx === items.length - 1 ? " disabled" : "") + ">" + T("next") + " &rarr;</button>";
+    }
+
+    enhanceLead(view || art);
+
+    if (view && view.scrollIntoView) view.scrollIntoView({ block: "start" });
+    else if (window.scrollTo) window.scrollTo(0, 0);
+  }
+
+  function showHome() {
+    active.id = null;
+    hide(hero, false);
+    hide(home, false);
+    hide(docsWrap, true);
+    DOCS.forEach(function (d) { hide(docEls[d.id], true); });
+    setActive("beranda");
+  }
+
+  function showDoc(id, idx) {
+    var d = byId(id);
+    if (!d) { showHome(); return; }
+    hide(hero, true);
+    hide(home, true);
+    hide(docsWrap, false);
+    DOCS.forEach(function (x) { hide(docEls[x.id], x.id !== id); });
+    setActive(id);
+    setItem(d, idx || 0);
+  }
+
+  function route() {
+    var h = String((window.location && window.location.hash) || "").replace(/^#/, "");
+    if (!h || h === "beranda") { showHome(); return; }
+    var parts = h.split("/");
+    var idx = parts[1] !== undefined ? parseInt(parts[1], 10) : 0;
+    if (isNaN(idx)) idx = 0;
+    showDoc(parts[0], idx);
+  }
+
+  function filterNav(q) {
+    q = String(q || "").toLowerCase();
+    var empty = q === "";
+    DOCS.forEach(function (d) {
+      var link = navIndex[d.id];
+      var sub = navIndex[d.id + "-sub"];
+      if (!link || !sub) return;
+      var titleMatch = !empty && (docTitle(d).toLowerCase().indexOf(q) >= 0 ||
+                                  docDesc(d).toLowerCase().indexOf(q) >= 0);
+      var any = titleMatch;
+      var links = sub.querySelectorAll ? sub.querySelectorAll("a") : [];
+      Array.prototype.forEach.call(links, function (s) {
+        var match = titleMatch || (!empty && s.textContent.toLowerCase().indexOf(q) >= 0);
+        s.style.display = (empty || match) ? "" : "none";
+        if (match) any = true;
+      });
+      if (empty) {
+        link.style.display = "";
+        sub.style.display = "";
+      } else {
+        link.style.display = any ? "" : "none";
+        sub.style.display = any ? "block" : "none";
+      }
+    });
+  }
+
+  function buildAll() {
+    nav.innerHTML = "";
+    content.innerHTML = "";
+    navIndex = {}; docEls = {};
+
+    var heading = document.createElement("h4");
+    heading.textContent = T("docsTitle");
+    nav.appendChild(heading);
+
+    var navFind = document.createElement("input");
+    navFind.type = "search";
+    navFind.className = "nav-find";
+    navFind.setAttribute("placeholder", T("find"));
+    navFind.addEventListener("input", function () { filterNav(navFind.value); });
+    nav.appendChild(navFind);
+
+    var list = document.createElement("div");
+    list.className = "nav-list";
+    nav.appendChild(list);
+
+    var ba = document.createElement("a");
+    ba.href = "#beranda"; ba.textContent = T("beranda");
+    list.appendChild(ba); navIndex["beranda"] = ba;
+
+    DOCS.forEach(function (d) {
+      var rawEl = document.getElementById(LANG === "en" ? d.mdEn : d.md);
+      var shown = publicize(rawEl ? rawEl.textContent : "");
+      d.lines = shown.split(/\n/).length;
+      d.parsed = splitDoc(shown);
+
+      var a = document.createElement("a");
+      a.href = "#" + d.id;
+      if (d.popular) a.classList.add("popular");
+      a.innerHTML = docTitle(d) + (d.popular ? ' <span class="pop">' + T("popular") + "</span>" : "") + "<small>" + docDesc(d) + "</small>";
+      list.appendChild(a); navIndex[d.id] = a;
+
+      var sub = document.createElement("div");
+      sub.className = "nav-sub";
+      d.parsed.items.forEach(function (it, i) {
+        var s = document.createElement("a");
+        s.href = "#" + d.id + "/" + i;
+        s.setAttribute("data-item", i);
+        s.innerHTML = '<span class="ns-txt">' + esc(it.label) + "</span>";
+        sub.appendChild(s);
+      });
+      list.appendChild(sub);
+      navIndex[d.id + "-sub"] = sub;
+      var art = document.createElement("article");
+      art.className = "doc";
+      art.id = "doc-" + d.id;
+      art.innerHTML =
+        '<div class="doc-head"><span class="fname">' + docTitle(d) + "</span>" +
+        '<span class="meta">' + d.lines + " " + T("metaLines") + " &middot; " + d.parsed.items.length + " " + T("metaItems") + "</span>" +
+        '<a class="back" href="#beranda">' + T("back") + "</a></div>" +
+        '<div class="doc-lead">' + d.parsed.lead + "</div>" +
+        '<div class="doc-view"></div><div class="doc-pager"></div>';
+      art.hidden = true;
+      content.appendChild(art);
+      docEls[d.id] = art;
+      enhanceLead(art);
+    });
+  }
+
+  function renderBenefits() {
+    var grid = document.getElementById("benefitGrid");
+    if (!grid) return;
+    var list = T("benefitList");
+    grid.innerHTML = "";
+    list.forEach(function (b) {
+      var d = document.createElement("div");
+      d.className = "benefit";
+      d.innerHTML = '<span class="b-ico">' + icon(b[0], 17) + "</span><div><h4>" + b[1] + "</h4><p>" + b[2] + "</p></div>";
+      grid.appendChild(d);
+    });
+  }
+
+  function applyI18n() {
+    document.documentElement.lang = LANG;
+    Array.prototype.forEach.call(document.querySelectorAll("[data-i18n]"), function (el) {
+      el.textContent = T(el.getAttribute("data-i18n"));
+    });
+    Array.prototype.forEach.call(document.querySelectorAll("[data-i18n-html]"), function (el) {
+      el.innerHTML = T(el.getAttribute("data-i18n-html"));
+    });
+    var lb = document.getElementById("langBtn");
+    if (lb) lb.textContent = T("langCode");
+    renderBenefits();
+  }
+
+  function updateBuildInfo() {
+    if (buildInfo) buildInfo.textContent = T("built") + ": " + new Date().toLocaleString(locale());
+  }
+
+  function setLang(lang) {
+    LANG = (lang === "en") ? "en" : "id";
+    try { localStorage.setItem("teritip-lang", LANG); } catch (e) {}
+    applyI18n();
+    buildAll();
+    route();
+    highlightAll(document);
+    updateBuildInfo();
+  }
+
+  applyI18n();
+  buildAll();
+
+  if (window.addEventListener) window.addEventListener("hashchange", route);
+  route();
+  highlightAll(document);
+
+  /* interaksi */
+  if (content.addEventListener) {
+    content.addEventListener("click", function (e) {
+      var t = e.target;
+      var tg = t && t.closest && t.tagName !== "INPUT" ? t.closest("[data-toggle='toc']") : null;
+      if (tg) {
+        var toc = tg.closest(".toc");
+        if (toc && toc.classList) toc.classList.toggle("open");
+        return;
+      }
+      var p = t && t.closest ? t.closest("[data-nav]") : null;
+      if (p && active.id) {
+        setItem(byId(active.id), active.idx + (p.getAttribute("data-nav") === "next" ? 1 : -1));
+        if (window.location) window.location.hash = active.id + "/" + active.idx;
+      }
+    });
+    content.addEventListener("input", function (e) {
+      var inp = e.target;
+      if (!inp || !inp.classList || !inp.classList.contains("toc-find")) return;
+      var q = String(inp.value || "").toLowerCase();
+      var art = inp.closest ? inp.closest(".doc") : null;
+      if (!art) return;
+      var toc = inp.closest ? inp.closest(".toc") : null;
+      if (toc && toc.classList) toc.classList.toggle("searching", q.length > 0);
+      Array.prototype.forEach.call(art.querySelectorAll(".toc-grid a"), function (a) {
+        a.style.display = a.textContent.toLowerCase().indexOf(q) >= 0 ? "" : "none";
+      });
+    });
+  }
+  if (nav.addEventListener) {
+    nav.addEventListener("click", function (e) {
+      if (e.target && e.target.closest && e.target.closest("a")) { if (nav.classList) nav.classList.remove("open"); }
+    });
+  }
+  document.getElementById("menuBtn").addEventListener("click", function () { if (nav.classList) nav.classList.toggle("open"); });
+  document.getElementById("reloadBtn").addEventListener("click", function () { location.reload(); });
+  var langBtn = document.getElementById("langBtn");
+  if (langBtn) langBtn.addEventListener("click", function () { setLang(LANG === "en" ? "id" : "en"); });
+
+  updateBuildInfo();
+
+  /* pemantauan: coba ambil berkas dokumen asli bila server menyajikannya */
+  function tryLive() {
+    if (!window.fetch) return;
+    var bases = ["../", "./", "/"];
+    var total = DOCS.length * bases.length, done = 0, got = 0;
+    DOCS.forEach(function (d) {
+      bases.forEach(function (base) {
+        fetch(base + d.file, { cache: "no-store" }).then(function (r) {
+          if (!r.ok) throw 0;
+          return r.text();
+        }).then(function (txt) {
+          if (txt && txt.replace(/\s/g, "").length > 40) {
+            var el = document.getElementById(d.md);
+            if (el) el.textContent = publicize(txt);
+            got++;
+          }
+        }).catch(function () {}).then(function () {
+          done++;
+          if (done === total && got > 0) {
+            buildAll(); route();
+            var st = document.getElementById("syncText");
+            if (st) st.textContent = T("synced");
+            buildInfo.textContent = T("syncedOn") + ": " + new Date().toLocaleString(locale());
+          }
+        });
+      });
+    });
+  }
+  tryLive();
+})();
+</script>
+</body>
+</html>
