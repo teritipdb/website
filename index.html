@@ -190,7 +190,7 @@
   <div class="top-in">
     <a class="brand" href="#beranda" aria-label="TeritipDB">
       <span class="logo-crop"><img src="logo.png" alt="TeritipDB"></span>
-      <span class="ver">v0.15.0</span>
+      <span class="ver">v0.20.0</span>
     </a>
     <div class="top-spacer"></div>
     <div class="status"><span class="dot"></span><span id="syncText" data-i18n="status">dokumen tersemat</span></div>
@@ -251,6 +251,11 @@
       <span class="h-ico"><svg viewBox="0 -960 960 960" width="18" height="18" fill="currentColor" aria-hidden="true"><path d="M300-720q-25 0-42.5 17.5T240-660q0 25 17.5 42.5T300-600q25 0 42.5-17.5T360-660q0-25-17.5-42.5T300-720Zm0 400q-25 0-42.5 17.5T240-260q0 25 17.5 42.5T300-200q25 0 42.5-17.5T360-260q0-25-17.5-42.5T300-320ZM160-840h640q17 0 28.5 11.5T840-800v280q0 17-11.5 28.5T800-480H160q-17 0-28.5-11.5T120-520v-280q0-17 11.5-28.5T160-840Zm40 80v200h560v-200H200Zm-40 320h640q17 0 28.5 11.5T840-400v280q0 17-11.5 28.5T800-80H160q-17 0-28.5-11.5T120-120v-280q0-17 11.5-28.5T160-440Zm40 80v200h560v-200H200Z"/></svg></span>
       <h3 data-i18n="navServer">Server &amp; Hosting</h3>
       <p data-i18n="hcServer">Di mana TeritipDB bisa dijalankan: PC, VPS, Docker, panel — dan yang tidak bisa.</p>
+    </a>
+    <a class="home-card" href="#kbat">
+      <span class="h-ico"><svg viewBox="0 -960 960 960" width="18" height="18" fill="currentColor" aria-hidden="true"><path d="m40-120 440-760 440 760H40Zm138-80h604L480-720 178-200Zm330.5-51.5Q520-263 520-280t-11.5-28.5Q497-320 480-320t-28.5 11.5Q440-297 440-280t11.5 28.5Q463-240 480-240t28.5-11.5ZM440-360h80v-200h-80v200Zm40-100Z"/></svg></span>
+      <h3 data-i18n="navKbat">Keterbatasan</h3>
+      <p data-i18n="hcKbat">Batasan struktural, keamanan, dan kelengkapan mesin.</p>
     </a>
   </div>
   <div class="home-facts">
@@ -373,7 +378,7 @@ teritip
 ```
 TERITIPDB
 (NXDOM) Nusantara eXtreme Development Object Model
-Version :v0.15.0
+Version :v0.20.0
 ===================================================
   Master port: 7000  (global admin)  |  Derived ports: 7001+
 
@@ -527,6 +532,16 @@ Tanpa token / token salah, server menjawab `401` dengan
 
 Token dikelola lewat menu `teritip` (opsi **Token**): lihat, regenerate,
 atur masa berlaku (dalam hari atau tanpa kedaluwarsa).
+
+Sejak **v0.20.0**, token user bisa **dirotasi lewat API** — token lama
+langsung tidak berlaku (berguna bila token bocor/pegawai keluar):
+
+```json
+{ "op": "rotate_token", "name": "budi" }
+```
+
+Token bawaan server dirotasi lewat menu → **Manage database** → **Token**
+→ **Regenerate**.
 
 ## 1e. Hak Akses per-User (Role)
 
@@ -1659,11 +1674,15 @@ Balikan (terbaru di atas):
 ```json
 { "ok": true,
   "data": [
-    { "id": 3, "at": "2026-10-10 10:15:05", "op": "delete", "tbl": "users", "rows": 1 },
-    { "id": 2, "at": "2026-10-10 10:15:01", "op": "insert", "tbl": "users", "rows": 2 }
+    { "id": 3, "at": "2026-10-10 10:15:05", "op": "delete", "tbl": "users", "rows": 1, "usr": "budi" },
+    { "id": 2, "at": "2026-10-10 10:15:01", "op": "insert", "tbl": "users", "rows": 2, "usr": "__owner__" }
   ],
   "meta": { "count": 2 } }
 ```
+
+Kolom `usr` = **pelaku** (nama user token yang dipakai):
+`__owner__` untuk token bawaan server, nama user untuk token user, dan `""`
+(kosong) bila diakses langsung lewat library tanpa identitas.
 
 Tabel `teritip_log` adalah tabel sistem — tidak muncul di `show_tables`.
 
@@ -2019,7 +2038,7 @@ teritip
 ```
 TERITIPDB
 (NXDOM) Nusantara eXtreme Development Object Model
-Version :v0.15.0
+Version :v0.20.0
 ===================================================
   Master port: 7000  (global admin)  |  Derived ports: 7001+
 
@@ -2172,6 +2191,17 @@ expired: `{"error":"token_expired"}`.
 
 The token is managed from the `teritip` menu (**Token** option): view,
 regenerate, set the expiry (in days or no expiry).
+
+Since **v0.20.0**, a user token can be **rotated via the API** — the old
+token stops working immediately (useful when a token leaks or an employee
+leaves):
+
+```json
+{ "op": "rotate_token", "name": "budi" }
+```
+
+The server's built-in token is rotated from the menu → **Manage database**
+→ **Token** → **Regenerate**.
 
 ## 1e. Per-User Access (Role)
 
@@ -3303,11 +3333,16 @@ Returns (newest first):
 ```json
 { "ok": true,
   "data": [
-    { "id": 3, "at": "2026-10-10 10:15:05", "op": "delete", "tbl": "users", "rows": 1 },
-    { "id": 2, "at": "2026-10-10 10:15:01", "op": "insert", "tbl": "users", "rows": 2 }
+    { "id": 3, "at": "2026-10-10 10:15:05", "op": "delete", "tbl": "users", "rows": 1, "usr": "budi" },
+    { "id": 2, "at": "2026-10-10 10:15:01", "op": "insert", "tbl": "users", "rows": 2, "usr": "__owner__" }
   ],
   "meta": { "count": 2 } }
 ```
+
+Column `usr` = the **actor** (the name of the user token used):
+`__owner__` for the server's built-in token, the user name for a user
+token, and `""` (empty) when accessed directly through the library with no
+identity.
 
 The `teritip_log` table is a system table — it does not appear in
 `show_tables`.
@@ -3694,7 +3729,7 @@ teritip
 ```
 TERITIPDB
 (NXDOM) Nusantara eXtreme Development Object Model
-Version :v0.15.0
+Version :v0.20.0
 ===================================================
   Master port: 7000  (global admin)  |  Derived ports: 7001+
 
@@ -4017,7 +4052,7 @@ teritip
 ```
 TERITIPDB
 (NXDOM) Nusantara eXtreme Development Object Model
-Version :v0.15.0
+Version :v0.20.0
 ===================================================
   Master port: 7000  (global admin)  |  Derived ports: 7001+
 
@@ -4809,6 +4844,142 @@ raw HTTP and WebSocket.
 - Large-data pagination: cursor `after` (see Syntax section 7.1).
 </script>
 
+<script type="text/markdown" id="md-kbat">
+# Keterbatasan TeritipDB — Analisis Jujur
+
+Dokumen ini merangkum keterbatasan nyata TeritipDB apa adanya — bukan
+pemasaran. Dipakai sebagai peta kerja untuk memperbaiki atau mengakui batas.
+Dibagi: **fondasi (batas struktural)**, **keamanan**, **kelengkapan mesin**,
+**operasional**, dan **ekosistem**.
+
+## A. Fondasi (batas struktural — sulit dihilangkan)
+
+| # | Keterbatasan | Sebab | Dampak nyata |
+|---|---|---|---|
+| A1 | **Satu penulis** | engine = 1 file | Lonjakan ribuan tulis serentak akan antre (data tidak hilang, tapi lambat). Bukan untuk situs publik ramai. |
+| A2 | **Tanpa sharding / multi-server tulis** | 1 database = 1 file | Tidak bisa tumbuh horizontal. Skala besar butuh database besar. |
+| A3 | **Tanpa replikasi / failover** | Tidak ada mekanisme salin-sejak | Server mati = database tidak tersedia sampai dinyalakan lagi. |
+| A4 | ~~Thread-per-koneksi~~ ✅ **DIPERBAIKI (v0.16.0)** | Kini **thread pool** tetap + batas koneksi | Pekerja dibatasi (`--workers`); kelebihan koneksi dibalas 503. |
+| A5 | ~~Tanpa TLS/HTTPS~~ ✅ **DIPERBAIKI (v0.17.0)** | Server bisa **HTTPS langsung** (`--tls-cert`/`--tls-key`); WebSocket jadi `wss://`. Tanpa TLS pakai reverse proxy (+ `--trust-proxy`). | Token aman bila HTTPS aktif. |
+
+## B. Keamanan (bisa diperkuat)
+
+| # | Keterbatasan | Bukti | Risiko |
+|---|---|---|---|
+| B1 | ~~Token = satu string statis, tanpa rotasi~~ ✅ **DIPERBAIKI (v0.20.0)** | op `rotate_token` + menu Token → Regenerate | Token lama langsung tidak berlaku setelah dirotasi. |
+| B2 | ~~Rate limit per-IP in-memory~~ ⚠️ **SEBAGIAN (v0.17.0)** | `--trust-proxy` menghormati `X-Forwarded-For`. Rate limit tetap in-memory (reset saat restart). | Di balik proxy: set `--trust-proxy 1`. |
+| B3 | ~~Auth WebSocket hanya saat handshake~~ ✅ **DIPERBAIKI (v0.19.0)** | Pemeriksaan ulang token WebSocket berkala (`--ws-recheck-sec`) | Koneksi WS dengan token yang sudah dicabut diputus otomatis. |
+| B4 | ~~`--db` path tak dibatasi~~ ✅ **DIPERBAIKI (v0.20.0)** | Opsi `--db-dir DIR`; server menolak (exit 1) bila `--db` di luar folder itu | Salah ketik/path liar tidak lagi berisiko. |
+| B5 | ~~Tanpa audit log per-user~~ ✅ **DIPERBAIKI (v0.18.0)** | log kini punya kolom `usr` | Bisa lacak "user X melakukan Y". |
+| B6 | **Password ≈ token** | User diwakili token `nx_` | Tidak ada password/2FA; token = segalanya. |
+
+## C. Kelengkapan mesin
+
+- **Tidak bisa mengubah TIPE kolom** — perlu rebuild (manual: kolom baru + salin data).
+- **`drop_column` gagal bila kolom dipakai index/tampilan.**
+- **Migrasi tanpa rollback per-versi** (hanya "gagal → transaksi dibatalkan").
+- **Join terbatas** — tanpa GROUP BY lintas-tabel join, tanpa subquery.
+- **Tanpa foreign key enforcement di API.**
+- **Tanpa full-text search.**
+- **Agregat tanpa `median`/`stdev`/window function.**
+- **Filter notifikasi 1 kolom = 1 nilai** (bukan ekspresi bebas).
+
+## D. Operasional / reliability
+
+- **Backup hanya salin file** — tanpa verifikasi integritas / PITR.
+- **`/health` hanya bilang "hidup"** — tidak verifikasi baca database.
+- **Tanpa auto-restart bila crash** — auto-start hanya saat boot.
+- **Metrik in-memory** — restart = hilang.
+- ~~Tanpa limit ukuran body~~ ✅ **v0.16.0** — `--max-body` (default 64 MB), kelebihan dibalas **413**.
+- ~~Thread tanpa pool~~ ✅ **v0.16.0** — thread pool tetap + `--max-connections`.
+
+## E. Distribusi / ekosistem
+
+- **macOS belum diuji** (baru build dari source).
+- **Arm64 belum dipaketkan.**
+- **npm installer mengambil rilis terbaru saja** (tanpa pin versi).
+
+## F. Yang BUKAN kelemahan
+
+- **Web admin** sengaja tidak dibuat — cukup mesin + API; UI diserahkan ke developer.
+- WebSocket tanpa kompresi — wajar untuk notifikasi kecil.
+
+## Ringkasan: 3 level keseriusan
+
+- **Kritis untuk produksi publik**: ~~A4~~ ✅ v0.16.0, ~~A5 (TLS)~~ ✅ v0.17.0, ~~B1~~ ✅ v0.20.0, ~~B4~~ ✅ v0.20.0, ~~D5~~ ✅ v0.16.0.
+- **Penting untuk tahan lama**: A3 (replikasi/backup teruji), ~~B3~~ ✅ v0.19.0, ~~B5~~ ✅ v0.18.0, D2/D3.
+- **Peningkatan kualitas**: C1–C8, E2 (ARM), D4.
+- **Batasan permanen** (jangan dilawan): A1, A2 — alat untuk aplikasi internal / prototipe / beban tersebar, **bukan** pengganti database skala besar.
+</script>
+
+<script type="text/markdown" id="md-kbat-en">
+# TeritipDB Limitations — Honest Analysis
+
+This document summarizes TeritipDB's real limitations as they are — not
+marketing. It is used as a roadmap for fixing or acknowledging limits.
+It is split into: **foundation (structural limits)**, **security**, **engine
+completeness**, **operations**, and **ecosystem**.
+
+## A. Foundation (structural limits — hard to remove)
+
+| # | Limitation | Cause | Real impact |
+|---|---|---|---|
+| A1 | **Single writer** | engine = 1 file | A burst of thousands of simultaneous writes will queue (nothing lost, but slow). Not for busy public sites. |
+| A2 | **No sharding / multi-server writes** | 1 database = 1 file | Cannot scale horizontally. Large scale still needs a big database. |
+| A3 | **No replication / failover** | No copy-since mechanism | Server down = database unavailable until started again. |
+| A4 | ~~Thread-per-connection~~ ✅ **FIXED (v0.16.0)** | Now a fixed **thread pool** + connection limit | Workers are capped (`--workers`); excess connections are answered with 503. |
+| A5 | ~~No TLS/HTTPS~~ ✅ **FIXED (v0.17.0)** | Server can serve **HTTPS directly** (`--tls-cert`/`--tls-key`); WebSocket becomes `wss://`. Without TLS, use a reverse proxy (+ `--trust-proxy`). | Token is safe when HTTPS is on. |
+
+## B. Security (can be hardened)
+
+| # | Limitation | Evidence | Risk |
+|---|---|---|---|
+| B1 | ~~Token = one static string, no rotation~~ ✅ **FIXED (v0.20.0)** | `rotate_token` op + Token menu → Regenerate | The old token stops working immediately after rotation. |
+| B2 | ~~Per-IP rate limit in-memory~~ ⚠️ **PARTIAL (v0.17.0)** | `--trust-proxy` honours `X-Forwarded-For`. Rate limit is still in-memory (resets on restart). | Behind a proxy: set `--trust-proxy 1`. |
+| B3 | ~~WebSocket auth only at handshake~~ ✅ **FIXED (v0.19.0)** | Periodic WebSocket token recheck (`--ws-recheck-sec`) | WS connections with a revoked token are disconnected automatically. |
+| B4 | ~~`--db` path not bounded~~ ✅ **FIXED (v0.20.0)** | `--db-dir DIR` option; the server refuses (exit 1) if `--db` is outside that folder | Typos / stray paths are no longer risky. |
+| B5 | ~~No per-user audit log~~ ✅ **FIXED (v0.18.0)** | log now has `usr` column | Can trace "user X did Y". |
+| B6 | **Password ~= token** | Users represented by an `nx_` token | No password/2FA; token is everything. |
+
+## C. Engine completeness
+
+- **Cannot change a COLUMN TYPE** — needs a table rebuild (manual: new column + copy data).
+- **`drop_column` fails if the column is used by an index/view.**
+- **No per-version migration rollback** (only "fail -> transaction cancelled").
+- **Limited JOIN** — no cross-table GROUP BY on joins, no subquery.
+- **No foreign key enforcement via the API.**
+- **No full-text search.**
+- **No `median`/`stdev`/window functions.**
+- **Notification filter is 1 column = 1 value** (not a free expression).
+
+## D. Operations / reliability
+
+- **Backup is only a file copy** — no integrity check / PITR.
+- **`/health` only says "alive"** — does not verify the database is readable.
+- **No auto-restart after a crash** — auto-start only at boot.
+- **In-memory metrics** — restart = lost.
+- ~~No body size limit~~ ✅ **v0.16.0** — `--max-body` (default 64 MB), excess answered with **413**.
+- ~~Thread without pool~~ ✅ **v0.16.0** — fixed thread pool + `--max-connections`.
+
+## E. Distribution / ecosystem
+
+- **macOS not yet tested** (source build only, no test machine).
+- **Arm64 not yet packaged.**
+- **npm installer fetches only the latest release** (no version pinning).
+
+## F. What is NOT a weakness
+
+- **Web admin** is deliberately not built — engine + API only; UI belongs to developers.
+- WebSocket without compression — fine for small notifications.
+
+## Summary: 3 severity levels
+
+- **Critical for public production**: ~~A4~~ ✅ v0.16.0, ~~A5 (TLS)~~ ✅ v0.17.0, ~~B1~~ ✅ v0.20.0, ~~B4~~ ✅ v0.20.0, ~~D5~~ ✅ v0.16.0.
+- **Important for longevity**: A3 (tested replication/backup), ~~B3~~ ✅ v0.19.0, ~~B5~~ ✅ v0.18.0, D2/D3.
+- **Quality improvements**: C1–C8, E2 (ARM), D4.
+- **Permanent limits** (do not fight): A1, A2 — a tool for internal apps / prototypes / spread-out load, **not** a replacement for large-scale databases.
+</script>
+
 <script>
 /* ==== Renderer markdown ringan + pemantauan dokumen ==== */
 (function () {
@@ -4819,6 +4990,7 @@ raw HTTP and WebSocket.
     "Klien": "#klien", "Clients": "#klien", "SDK": "#klien",
     "Untuk Developer": "#dev", "For Developers": "#dev", "Developer": "#dev",
     "Pasang via AI": "#ai", "Install via AI": "#ai",
+    "Keterbatasan": "#kbat", "Limitations": "#kbat",
     "Ringkasan": "#ringkasan", "Overview": "#ringkasan",
     "Sintaks": "#sintaks", "Syntax": "#sintaks",
     "Server": "#server",
@@ -4847,7 +5019,10 @@ raw HTTP and WebSocket.
       desc: "Operasi JSON: insert, select, join, tx.", descEn: "JSON ops: insert, select, join, tx." },
     { id: "server", md: "md-server", mdEn: "md-server-en",
       title: "Server & Hosting", titleEn: "Server & Hosting", file: "server.md",
-      desc: "Di mana TeritipDB bisa dijalankan.", descEn: "Where TeritipDB can run." }
+      desc: "Di mana TeritipDB bisa dijalankan.", descEn: "Where TeritipDB can run." },
+    { id: "kbat", md: "md-kbat", mdEn: "md-kbat-en",
+      title: "Keterbatasan", titleEn: "Limitations", file: "Keterbatasan.md",
+      desc: "Analisis jujur: batas & risiko.", descEn: "Honest analysis: limits & risks." }
   ];
 
   var I18N = {
@@ -4863,7 +5038,7 @@ raw HTTP and WebSocket.
       homeSub: "Pilih bagian di bawah ini untuk memulai dengan TeritipDB.",
       extraTitle: "Alat & bantuan",
       extraSub: "Bukan bagian inti dokumentasi \u2014 tetapi memudahkan.",
-      navPanduan: "Panduan", navAI: "Pasang via AI", navKlien: "Klien", navDev: "Untuk Developer", navRingkasan: "Ringkasan", navSintaks: "Sintaks", navServer: "Server & Hosting",
+      navPanduan: "Panduan", navAI: "Pasang via AI", navKlien: "Klien", navDev: "Untuk Developer", navRingkasan: "Ringkasan", navSintaks: "Sintaks", navServer: "Server & Hosting", navKbat: "Keterbatasan",
       hcPanduan: "Cara pasang dan pakai: npm, menu teritip, HTTP, dan klien.",
       hcAI: "Salin prompt, serahkan ke AI agent untuk memasang TeritipDB.",
       hcKlien: "Klien resmi: Python, JS, PHP, React Native, Go, Java, C#.",
@@ -4871,6 +5046,7 @@ raw HTTP and WebSocket.
       hcRingkasan: "Pengantar TeritipDB, alur JSON ke engine, cara install, dan target yang didukung.",
       hcSintaks: "Semua operasi JSON: insert, update, delete, select, join, tx, where, dan agregat.",
       hcServer: "Di mana TeritipDB bisa dijalankan: PC, VPS, Docker, panel \u2014 dan yang tidak bisa.",
+      hcKbat: "Batasan struktural, keamanan, dan kelengkapan mesin.",
       factJson: "JSON", factJsonSub: "Klien kirim JSON, tanpa menulis SQL",
       factOne: "1 perintah", factOneSub: "<code>npm create teritip-app@latest</code>",
       factPort: "Portabel", factPortSub: "Satu file data, semua OS",
@@ -4909,7 +5085,7 @@ raw HTTP and WebSocket.
       homeSub: "Pick a section below to get started with TeritipDB.",
       extraTitle: "Tools & help",
       extraSub: "Not core documentation \u2014 but they make things easier.",
-      navPanduan: "Guide", navAI: "Install via AI", navKlien: "Clients", navDev: "For Developers", navRingkasan: "Overview", navSintaks: "Syntax", navServer: "Server & Hosting",
+      navPanduan: "Guide", navAI: "Install via AI", navKlien: "Clients", navDev: "For Developers", navRingkasan: "Overview", navSintaks: "Syntax", navServer: "Server & Hosting", navKbat: "Limitations",
       hcPanduan: "How to install and use: npm, the teritip menu, HTTP, and the client.",
       hcAI: "Copy a prompt and hand it to an AI agent to install TeritipDB.",
       hcKlien: "Official clients: Python, JS, PHP, React Native, Go, Java, C#.",
@@ -4917,6 +5093,7 @@ raw HTTP and WebSocket.
       hcRingkasan: "Intro to TeritipDB, the JSON-to-engine flow, install, and supported targets.",
       hcSintaks: "Every JSON operation: insert, update, delete, select, join, tx, where, and aggregates.",
       hcServer: "Where TeritipDB can run: PC, VPS, Docker, panels \u2014 and where it can't.",
+      hcKbat: "Structural, security, and engine-completeness limits.",
       factJson: "JSON", factJsonSub: "Clients send JSON, no SQL",
       factOne: "1 command", factOneSub: "<code>npm create teritip-app@latest</code>",
       factPort: "Portable", factPortSub: "One data file, all OSes",
