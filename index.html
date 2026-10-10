@@ -189,11 +189,15 @@
 <header class="top">
   <div class="top-in">
     <a class="brand" href="#beranda" aria-label="TeritipDB">
-      <span class="logo-crop"><img src="./logo.png" alt="TeritipDB"></span>
-      <span class="ver">v0.9.0</span>
+      <span class="logo-crop"><img src="aset/logo.png" alt="TeritipDB"></span>
+      <span class="ver">v0.15.0</span>
     </a>
     <div class="top-spacer"></div>
     <div class="status"><span class="dot"></span><span id="syncText" data-i18n="status">dokumen tersemat</span></div>
+    <a href="https://github.com/sponsors/iyanrsaleh" target="_blank" rel="noopener" class="btn" style="color:#db61a2; border-color:#db61a2; display:inline-flex; align-items:center; gap:6px; font-family:var(--sans);">
+      <svg viewBox="0 0 16 16" width="13" height="13" aria-hidden="true"><path fill="currentColor" fill-rule="evenodd" d="M4.25 2.5c-1.336 0-2.75 1.164-2.75 3 0 2.15 1.58 4.144 3.365 5.682A20.565 20.565 0 008 13.393a20.561 20.561 0 003.135-2.211C12.92 9.644 14.5 7.65 14.5 5.5c0-1.836-1.414-3-2.75-3-1.373 0-2.609.986-3.029 2.456a.75.75 0 01-1.442 0C6.859 3.486 5.623 2.5 4.25 2.5zM8 14.25l-.345.666-.002-.001-.006-.003-.018-.01a7.643 7.643 0 01-.31-.17 22.075 22.075 0 01-3.434-2.414C2.045 10.731 0 8.35 0 5.5 0 2.836 2.086 1 4.25 1 5.797 1 7.153 1.802 8 3.02 8.847 1.802 10.203 1 11.75 1 13.914 1 16 2.836 16 5.5c0 2.85-2.045 5.231-3.885 6.818a22.08 22.08 0 01-3.744 2.584l-.018.01-.006.003h-.002L8 14.25z"></path></svg>
+      Sponsor
+    </a>
     <button class="btn lang-btn" id="langBtn"><svg viewBox="0 -960 960 960" width="15" height="15" fill="currentColor" aria-hidden="true"><path d="M325-111.5q-73-31.5-127.5-86t-86-127.5Q80-398 80-480.5t31.5-155q31.5-72.5 86-127t127.5-86Q398-880 480.5-880t155 31.5q72.5 31.5 127 86t86 127Q880-563 880-480.5T848.5-325q-31.5 73-86 127.5t-127 86Q563-80 480.5-80T325-111.5ZM480-162q26-36 45-75t31-83H404q12 44 31 83t45 75Zm-104-16q-18-33-31.5-68.5T322-320H204q29 50 72.5 87t99.5 55Zm208 0q56-18 99.5-55t72.5-87H638q-9 38-22.5 73.5T584-178ZM170-400h136q-3-20-4.5-39.5T300-480q0-21 1.5-40.5T306-560H170q-5 20-7.5 39.5T160-480q0 21 2.5 40.5T170-400Zm216 0h188q3-20 4.5-39.5T580-480q0-21-1.5-40.5T574-560H386q-3 20-4.5 39.5T380-480q0 21 1.5 40.5T386-400Zm268 0h136q5-20 7.5-39.5T800-480q0-21-2.5-40.5T790-560H654q3 20 4.5 39.5T660-480q0 21-1.5 40.5T654-400Z"/></svg> EN</button>
     <button class="btn" id="reloadBtn"><svg viewBox="0 -960 960 960" width="15" height="15" fill="currentColor" aria-hidden="true"><path d="M480-160q-134 0-227-93t-93-227q0-134 93-227t227-93q69 0 132 28.5T720-690v-110h80v280H520v-80h168q-32-56-87.5-88T480-720q-100 0-170 70t-70 170q0 100 70 170t170 70q77 0 139-44t87-116h84q-28 106-114 173t-196 67Z"/></svg> <span data-i18n="reload">Muat ulang</span></button>
     <button class="btn menu-btn" id="menuBtn"><svg viewBox="0 -960 960 960" width="15" height="15" fill="currentColor" aria-hidden="true"><path d="M480-160q-134 0-227-93t-93-227q0-134 93-227t227-93q69 0 132 28.5T720-690v-110h80v280H520v-80h168q-32-56-87.5-88T480-720q-100 0-170 70t-70 170q0 100 70 170t170 70q77 0 139-44t87-116h84q-28 106-114 173t-196 67Z"/></svg> <span data-i18n="menu">Menu</span></button>
@@ -369,7 +373,7 @@ teritip
 ```
 TERITIPDB
 (NXDOM) Nusantara eXtreme Development Object Model
-Version :v0.9.0
+Version :v0.15.0
 ===================================================
   Master port: 7000  (global admin)  |  Derived ports: 7001+
 
@@ -580,7 +584,40 @@ Server melindungi token dari percobaan tebak-tebakan:
 
 - `POST /` dan `POST /query` — kirim perintah JSON.
 - `GET /health` — cek server hidup (tanpa token).
+- `GET /metrics` — metrik server (JSON; `?format=prometheus` untuk teks).
+  Bila server memakai token, endpoint ini juga butuh token.
 - `GET /ws` — WebSocket untuk notifikasi realtime (lihat bagian 15).
+
+### Monitoring (metrik server)
+
+Ambil lewat op `stats` (dari klien mana pun) atau `GET /metrics`:
+
+```json
+{ "op": "stats" }
+```
+
+Balikan (ringkas):
+
+```json
+{ "ok": true, "service": "TeritipDB", "uptimeSec": 3600,
+  "requests": { "total": 1200, "ok": 1190, "errors": 10,
+                "reads": 900, "writes": 300,
+                "avgLatencyMs": 1.8, "maxLatencyMs": 42.0,
+                "bytesIn": 50000, "bytesOut": 900000 },
+  "rejected": { "auth": 3, "rateLimit": 1, "role": 0 },
+  "websocket": { "current": 2, "total": 15 },
+  "database": { "sizeBytes": 1048576, "walBytes": 20000, "tables": 7 },
+  "requestsPerSec": 0.33 }
+```
+
+Untuk **Prometheus/Grafana**, pakai:
+
+```
+GET /metrics?format=prometheus
+```
+
+Menghasilkan teks format Prometheus (mis. `teritip_requests_total`,
+`teritip_db_size_bytes`, `teritip_ws_current`, dst).
 
 ## 1d. Manajemen Database (Server Induk)
 
@@ -711,7 +748,7 @@ dengan tipe **tidak cocok** akan ditolak dengan error `type_mismatch`:
 Request:
 
 ```json
-{ "op": "<insert|update|delete|select|join|tx|create_table|show_tables|create_index|drop_table|export|import|list_databases|create_database|drop_database|create_user|list_users|drop_user|set_role|upload|list_files|get_file|delete_file|logs>",
+{ "op": "<insert|update|delete|select|join|tx|create_table|show_tables|create_index|drop_table|export|import|list_databases|create_database|drop_database|create_user|list_users|drop_user|set_role|upload|list_files|get_file|delete_file|add_column|drop_column|rename_column|rename_table|create_migration|migrate|migration_status|stats|logs>",
   "table": "<nama>", ... }
 ```
 
@@ -948,6 +985,33 @@ SELECT * FROM users WHERE kota IN (?, ?);
 SELECT * FROM users WHERE nama LIKE ?;
 ```
 
+Kebalikannya: `{ "nama": { "not_like": "%bud%" } }` -> `NOT LIKE ?`
+(alias `notlike`, `notLike`).
+
+### BETWEEN (rentang)
+
+```json
+{ "op": "select", "table": "users", "where": { "umur": { "between": [20, 30] } } }
+```
+
+```sql
+SELECT * FROM users WHERE umur BETWEEN ? AND ?;
+```
+
+`between` harus array **dua** nilai `[min, max]`.
+
+### NOT IN
+
+```json
+{ "op": "select", "table": "users", "where": { "kota": { "notin": ["Jakarta", "Bandung"] } } }
+```
+
+```sql
+SELECT * FROM users WHERE kota NOT IN (?, ?);
+```
+
+Alias: `notin`, `not_in`, `notIn`.
+
 ### NULL
 
 ```json
@@ -958,7 +1022,27 @@ SELECT * FROM users WHERE nama LIKE ?;
 SELECT * FROM users WHERE email IS NULL;
 ```
 
-Untuk bukan null: `{ "email": { "not": null } }` -> `IS NOT NULL`.
+Untuk bukan null, beberapa bentuk setara:
+
+```json
+{ "email": { "not": null } }
+{ "email": { "isnotnull": true } }
+```
+
+-> `email IS NOT NULL`. Sebaliknya `{ "email": { "isnull": true } }` -> `IS NULL`
+(alias `is_null` / `is_not_null`).
+
+### NOT atas kondisi apa pun
+
+`not` juga bisa membungkus kondisi lain (mis. `in`, `like`, `between`):
+
+```json
+{ "op": "select", "table": "users", "where": { "kota": { "not": { "in": ["A", "B"] } } } }
+```
+
+```sql
+SELECT * FROM users WHERE NOT (kota IN (?, ?));
+```
 
 ### AND / OR / NOT dan pengelompokan
 
@@ -1110,6 +1194,56 @@ GROUP BY user_id;
 
 Tanpa `group`, agregat menghitung seluruh tabel. Boleh digabung dengan
 `where` untuk membatasi baris yang dihitung.
+
+### 11.1b Beberapa agregat & DISTINCT
+
+Beberapa agregat bisa diminta sekaligus (satu objek per agregat):
+
+```json
+{ "op": "select", "table": "orders",
+  "select": [ { "sum": "total", "as": "omzet" },
+              { "count": "*", "as": "n" },
+              { "avg": "total", "as": "rata" } ] }
+```
+
+**DISTINCT** di dalam agregat (`count`/`sum`/`avg`/`min`/`max`):
+
+```json
+{ "op": "select", "table": "orders",
+  "select": [ { "count": "kota", "distinct": true, "as": "nKota" } ] }
+```
+
+```sql
+SELECT COUNT(DISTINCT kota) AS nKota FROM orders;
+```
+
+**SELECT DISTINCT** (seluruh baris unik) — set `"distinct": true` di root:
+
+```json
+{ "op": "select", "table": "orders", "distinct": true, "select": ["kota"] }
+```
+
+```sql
+SELECT DISTINCT kota FROM orders;
+```
+
+### 11.1c Agregat bersyarat (FILTER)
+
+Hitung agregat hanya untuk baris yang cocok syarat tertentu:
+
+```json
+{ "op": "select", "table": "orders",
+  "select": [ { "sum": "total", "filter": { "status": "lunas" }, "as": "lunas" },
+              { "sum": "total", "as": "semua" } ] }
+```
+
+```sql
+SELECT SUM(total) FILTER (WHERE status = ?) AS lunas,
+       SUM(total) AS semua
+FROM orders;
+```
+
+Bisa digabung dengan `where`, `group`, dan `having`.
 
 ### 11.1 HAVING (menyaring hasil grup)
 
@@ -1338,6 +1472,92 @@ await fetch("http://127.0.0.1:7001/", {
 **Catatan:** saat **backup**, salin juga folder `files/` — kalau tidak,
 metadata ada tapi berkas fisiknya hilang.
 
+## 14c. Migrasi Skema (evolusi tabel)
+
+Agar aplikasi bisa berubah tanpa `drop_table` + `import` ulang, TeritipDB
+menyediakan **migrasi ber-nomor**. Yang sudah diterapkan dicatat di tabel
+internal `teritip_migrations`.
+
+### Operasi skema
+
+**Tambah kolom** (idempoten: kolom yang sudah ada dilewati):
+
+```json
+{ "op": "add_column", "table": "users", "column": "umur",
+  "type": "integer", "default": 0 }
+```
+
+`type` opsional (`integer`/`real`/`text`; default `text`). `notnull` dan
+`default` opsional.
+
+**Hapus kolom** (engine modern):
+
+```json
+{ "op": "drop_column", "table": "users", "column": "umur" }
+```
+
+**Ganti nama kolom:**
+
+```json
+{ "op": "rename_column", "table": "users", "from": "nama", "to": "judul" }
+```
+
+**Ganti nama tabel:**
+
+```json
+{ "op": "rename_table", "table": "users", "to": "pelanggan" }
+```
+
+### Mendaftarkan & menjalankan migrasi
+
+**Daftarkan** migrasi ber-nomor (`ops` = daftar operasi, boleh campur op
+data & skema):
+
+```json
+{ "op": "create_migration", "version": 1, "name": "tambah kolom umur",
+  "ops": [ { "op": "add_column", "table": "users", "column": "umur",
+             "type": "integer", "default": 0 } ] }
+```
+
+**Jalankan** semua migrasi yang belum diterapkan (urut menaik):
+
+```json
+{ "op": "migrate" }
+```
+
+Balikan:
+
+```json
+{ "ok": true, "data": [ { "version": 1, "name": "tambah kolom umur", "applied": true } ],
+  "meta": { "rowsAffected": 1 } }
+```
+
+**Cek status:**
+
+```json
+{ "op": "migration_status" }
+```
+
+```json
+{ "ok": true, "data": [
+  { "version": 1, "name": "tambah kolom umur", "applied": true,
+    "appliedAt": "2026-10-10 10:00:00" },
+  { "version": 2, "name": "", "applied": false } ] }
+```
+
+Aturan jujur:
+
+- Tiap migrasi berjalan dalam **satu transaksi**. Bila satu op gagal,
+  seluruh migrasi **dibatalkan** dan versi **tidak** tercatat.
+- **Idempoten**: menjalankan `migrate` ulang melewati yang sudah diterapkan
+  (balas `rowsAffected: 0`). `add_column`/`drop_column` juga idempoten.
+- `tx` dan `migrate` **tidak boleh** dipakai di dalam `ops` migrasi.
+- Ini **bukan** sistem migrasi lengkap (tidak ada rollback per-versi).
+  Rollback hanya "gagal → transaksi dibatalkan".
+- Engine **tidak bisa** mengubah **tipe** kolom langsung. Untuk itu, buat
+  kolom baru lalu salin data (pola manual).
+- Operasi migrasi hanya untuk **admin**.
+
 ## 15. Realtime (Notifikasi Perubahan)
 
 Server menyediakan WebSocket di `ws://<host>:<port>/ws?token=<token>`.
@@ -1358,6 +1578,43 @@ Server membalas:
 ```json
 { "type": "subscribed", "table": "users" }
 ```
+
+### Berlangganan ber-filter (notifikasi per-user)
+
+Default: klien menerima **semua** perubahan tabel. Untuk multi-tenant / chat,
+klien bisa minta hanya baris miliknya. Dua cara:
+
+**1. `filter` — kolom = nilai tetap**
+
+```json
+{ "subscribe": "chat", "filter": { "room": "A" } }
+```
+
+Klien hanya menerima perubahan baris dengan `room` = `"A"`.
+
+**2. `filterUser` — kolom = nama user token ini**
+
+```json
+{ "subscribe": "chat", "filterUser": "pemilik" }
+```
+
+Nilai kolom `pemilik` dicocokkan otomatis dengan **nama user** dari token
+yang dipakai koneksi WS. Jadi tiap user hanya menerima barisnya sendiri.
+
+Balasan subscribe menyertakan filter:
+
+```json
+{ "type": "subscribed", "table": "chat", "filter": { "room": "A" } }
+```
+
+Catatan jujur:
+
+- Ini **filter notifikasi**, bukan pengamanan data. Isolasi data sebenarnya
+  tetap lewat **role** + `where` pada API biasa.
+- Filter hanya **satu kolom = satu nilai** (bukan ekspresi bebas). Untuk
+  filter rumit, saring sendiri di sisi UI.
+- Untuk `update`/`delete`, baris yang terpengaruh ikut dikirim sebagai data
+  agar filter bisa dievaluasi.
 
 ### Notifikasi yang diterima
 
@@ -1762,7 +2019,7 @@ teritip
 ```
 TERITIPDB
 (NXDOM) Nusantara eXtreme Development Object Model
-Version :v0.9.0
+Version :v0.15.0
 ===================================================
   Master port: 7000  (global admin)  |  Derived ports: 7001+
 
@@ -1971,7 +2228,40 @@ The server protects tokens from guessing attempts:
 
 - `POST /` and `POST /query` — send a JSON command.
 - `GET /health` — check the server is alive (no token).
+- `GET /metrics` — server metrics (JSON; `?format=prometheus` for text).
+  If the server uses a token, this endpoint also requires it.
 - `GET /ws` — WebSocket for realtime notifications (see section 15).
+
+### Monitoring (server metrics)
+
+Get it via the `stats` op (from any client) or `GET /metrics`:
+
+```json
+{ "op": "stats" }
+```
+
+Returns (abridged):
+
+```json
+{ "ok": true, "service": "TeritipDB", "uptimeSec": 3600,
+  "requests": { "total": 1200, "ok": 1190, "errors": 10,
+                "reads": 900, "writes": 300,
+                "avgLatencyMs": 1.8, "maxLatencyMs": 42.0,
+                "bytesIn": 50000, "bytesOut": 900000 },
+  "rejected": { "auth": 3, "rateLimit": 1, "role": 0 },
+  "websocket": { "current": 2, "total": 15 },
+  "database": { "sizeBytes": 1048576, "walBytes": 20000, "tables": 7 },
+  "requestsPerSec": 0.33 }
+```
+
+For **Prometheus/Grafana**, use:
+
+```
+GET /metrics?format=prometheus
+```
+
+It produces Prometheus-format text (e.g. `teritip_requests_total`,
+`teritip_db_size_bytes`, `teritip_ws_current`, etc.).
 
 ## 1d. Database Management (Root Server)
 
@@ -2102,7 +2392,7 @@ Once declared, an `insert`/`update`/`import` that sends a value of the
 Request:
 
 ```json
-{ "op": "<insert|update|delete|select|join|tx|create_table|show_tables|create_index|drop_table|export|import|list_databases|create_database|drop_database|create_user|list_users|drop_user|set_role|upload|list_files|get_file|delete_file|logs>",
+{ "op": "<insert|update|delete|select|join|tx|create_table|show_tables|create_index|drop_table|export|import|list_databases|create_database|drop_database|create_user|list_users|drop_user|set_role|upload|list_files|get_file|delete_file|add_column|drop_column|rename_column|rename_table|create_migration|migrate|migration_status|stats|logs>",
   "table": "<name>", ... }
 ```
 
@@ -2337,6 +2627,33 @@ SELECT * FROM users WHERE kota IN (?, ?);
 SELECT * FROM users WHERE nama LIKE ?;
 ```
 
+The inverse: `{ "nama": { "not_like": "%bud%" } }` -> `NOT LIKE ?`
+(aliases `notlike`, `notLike`).
+
+### BETWEEN (range)
+
+```json
+{ "op": "select", "table": "users", "where": { "umur": { "between": [20, 30] } } }
+```
+
+```sql
+SELECT * FROM users WHERE umur BETWEEN ? AND ?;
+```
+
+`between` must be an array of **two** values `[min, max]`.
+
+### NOT IN
+
+```json
+{ "op": "select", "table": "users", "where": { "kota": { "notin": ["Jakarta", "Bandung"] } } }
+```
+
+```sql
+SELECT * FROM users WHERE kota NOT IN (?, ?);
+```
+
+Aliases: `notin`, `not_in`, `notIn`.
+
 ### NULL
 
 ```json
@@ -2347,7 +2664,27 @@ SELECT * FROM users WHERE nama LIKE ?;
 SELECT * FROM users WHERE email IS NULL;
 ```
 
-For not null: `{ "email": { "not": null } }` -> `IS NOT NULL`.
+For not null, several equivalent forms:
+
+```json
+{ "email": { "not": null } }
+{ "email": { "isnotnull": true } }
+```
+
+-> `email IS NOT NULL`. Conversely `{ "email": { "isnull": true } }` -> `IS NULL`
+(aliases `is_null` / `is_not_null`).
+
+### NOT over any condition
+
+`not` can also wrap another condition (e.g. `in`, `like`, `between`):
+
+```json
+{ "op": "select", "table": "users", "where": { "kota": { "not": { "in": ["A", "B"] } } } }
+```
+
+```sql
+SELECT * FROM users WHERE NOT (kota IN (?, ?));
+```
 
 ### AND / OR / NOT and grouping
 
@@ -2499,6 +2836,56 @@ GROUP BY user_id;
 
 Without `group`, the aggregate spans the whole table. It can be combined
 with `where` to limit the rows counted.
+
+### 11.1b Multiple aggregates & DISTINCT
+
+Several aggregates can be requested at once (one object per aggregate):
+
+```json
+{ "op": "select", "table": "orders",
+  "select": [ { "sum": "total", "as": "omzet" },
+              { "count": "*", "as": "n" },
+              { "avg": "total", "as": "rata" } ] }
+```
+
+**DISTINCT** inside an aggregate (`count`/`sum`/`avg`/`min`/`max`):
+
+```json
+{ "op": "select", "table": "orders",
+  "select": [ { "count": "kota", "distinct": true, "as": "nKota" } ] }
+```
+
+```sql
+SELECT COUNT(DISTINCT kota) AS nKota FROM orders;
+```
+
+**SELECT DISTINCT** (whole unique rows) — set `"distinct": true` at the root:
+
+```json
+{ "op": "select", "table": "orders", "distinct": true, "select": ["kota"] }
+```
+
+```sql
+SELECT DISTINCT kota FROM orders;
+```
+
+### 11.1c Conditional aggregates (FILTER)
+
+Compute an aggregate only for rows matching a condition:
+
+```json
+{ "op": "select", "table": "orders",
+  "select": [ { "sum": "total", "filter": { "status": "lunas" }, "as": "lunas" },
+              { "sum": "total", "as": "semua" } ] }
+```
+
+```sql
+SELECT SUM(total) FILTER (WHERE status = ?) AS lunas,
+       SUM(total) AS semua
+FROM orders;
+```
+
+It can be combined with `where`, `group`, and `having`.
 
 ### 11.1 HAVING (filter grouped results)
 
@@ -2728,6 +3115,92 @@ await fetch("http://127.0.0.1:7001/", {
 **Note:** when you **back up**, also copy the `files/` folder — otherwise
 the metadata exists but the physical files are gone.
 
+## 14c. Schema Migrations (evolving tables)
+
+So an app can change without `drop_table` + re-`import`, TeritipDB provides
+**numbered migrations**. Applied ones are recorded in the internal
+`teritip_migrations` table.
+
+### Schema operations
+
+**Add a column** (idempotent: an existing column is skipped):
+
+```json
+{ "op": "add_column", "table": "users", "column": "umur",
+  "type": "integer", "default": 0 }
+```
+
+`type` is optional (`integer`/`real`/`text`; default `text`). `notnull` and
+`default` are optional.
+
+**Drop a column** (modern engine):
+
+```json
+{ "op": "drop_column", "table": "users", "column": "umur" }
+```
+
+**Rename a column:**
+
+```json
+{ "op": "rename_column", "table": "users", "from": "nama", "to": "judul" }
+```
+
+**Rename a table:**
+
+```json
+{ "op": "rename_table", "table": "users", "to": "pelanggan" }
+```
+
+### Registering & running migrations
+
+**Register** a numbered migration (`ops` = list of operations, data & schema
+ops may be mixed):
+
+```json
+{ "op": "create_migration", "version": 1, "name": "add umur column",
+  "ops": [ { "op": "add_column", "table": "users", "column": "umur",
+             "type": "integer", "default": 0 } ] }
+```
+
+**Run** every pending migration (ascending):
+
+```json
+{ "op": "migrate" }
+```
+
+Returns:
+
+```json
+{ "ok": true, "data": [ { "version": 1, "name": "add umur column", "applied": true } ],
+  "meta": { "rowsAffected": 1 } }
+```
+
+**Check status:**
+
+```json
+{ "op": "migration_status" }
+```
+
+```json
+{ "ok": true, "data": [
+  { "version": 1, "name": "add umur column", "applied": true,
+    "appliedAt": "2026-10-10 10:00:00" },
+  { "version": 2, "name": "", "applied": false } ] }
+```
+
+Honest rules:
+
+- Each migration runs in **one transaction**. If a single op fails, the whole
+  migration is **cancelled** and the version is **not** recorded.
+- **Idempotent**: re-running `migrate` skips applied ones (replies
+  `rowsAffected: 0`). `add_column`/`drop_column` are also idempotent.
+- `tx` and `migrate` **must not** be used inside a migration's `ops`.
+- This is **not** a full migration system (no per-version rollback). The only
+  rollback is "fail -> transaction cancelled".
+- The engine **cannot** change a column's **type** directly. To do that,
+  create a new column and copy the data (manual pattern).
+- Migration operations are admin-only.
+
 ## 15. Realtime (Change Notifications)
 
 The server provides a WebSocket at `ws://<host>:<port>/ws?token=<token>`.
@@ -2748,6 +3221,44 @@ The server replies:
 ```json
 { "type": "subscribed", "table": "users" }
 ```
+
+### Filtered subscription (per-user notifications)
+
+By default, a client receives **all** table changes. For multi-tenant / chat,
+a client can ask for only its own rows. Two ways:
+
+**1. `filter` — column = fixed value**
+
+```json
+{ "subscribe": "chat", "filter": { "room": "A" } }
+```
+
+The client only receives changes to rows where `room` = `"A"`.
+
+**2. `filterUser` — column = the token's user name**
+
+```json
+{ "subscribe": "chat", "filterUser": "pemilik" }
+```
+
+The `pemilik` column value is matched automatically against the **user name**
+of the token used by the WS connection. So each user only receives its own
+rows.
+
+The subscribe reply includes the filter:
+
+```json
+{ "type": "subscribed", "table": "chat", "filter": { "room": "A" } }
+```
+
+Honest notes:
+
+- This is a **notification filter**, not data security. Real data isolation
+  stays via **role** + `where` on the normal API.
+- The filter is only **one column = one value** (not a free expression). For
+  complex filters, filter on the UI side.
+- For `update`/`delete`, the affected row is sent as data so the filter can
+  be evaluated.
 
 ### Notifications received
 
@@ -3183,7 +3694,7 @@ teritip
 ```
 TERITIPDB
 (NXDOM) Nusantara eXtreme Development Object Model
-Version :v0.9.0
+Version :v0.15.0
 ===================================================
   Master port: 7000  (global admin)  |  Derived ports: 7001+
 
@@ -3506,7 +4017,7 @@ teritip
 ```
 TERITIPDB
 (NXDOM) Nusantara eXtreme Development Object Model
-Version :v0.9.0
+Version :v0.15.0
 ===================================================
   Master port: 7000  (global admin)  |  Derived ports: 7001+
 
@@ -3751,6 +4262,7 @@ menulis HTTP manual.
 | React Native | `clients/react-native/teritip-rn.js` | React Native (fetch bawaan) |
 | Go | `clients/go/teritip.go` | Go (pustaka standar) |
 | Java | `clients/java/teritip/TeritipDb.java` | Java (JDK 11+, `java.net.http`) |
+| C# (.NET) | `clients/csharp/TeritipDb.cs` | .NET 6+ (`System.Net.Http`) |
 
 Semua klien menyambung ke server TeritipDB yang sedang jalan.
 
@@ -3865,6 +4377,33 @@ javac -d out teritip/Json.java teritip/TeritipDb.java Example.java
 java -cp out Example
 ```
 
+## C# (.NET)
+
+```csharp
+using Teritip;
+
+var db = new TeritipDb("127.0.0.1", 7001, "nx_token_anda");
+
+await db.CreateTableAsync("users", new Dictionary<string, string> {
+    ["nama"] = "text", ["umur"] = "integer",
+});
+await db.InsertAsync("users", new { nama = "Budi", umur = 30 });
+
+var rows = await db.SelectAsync("users", new SelectOpts {
+    Where = new() { ["umur"] = new Dictionary<string, object?> { [">"] = 20 } },
+});
+
+await db.UpdateAsync("users", new { umur = 31 },
+    new() { ["where"] = new Dictionary<string, object?> { ["nama"] = "Budi" } });
+await db.DeleteAsync("users", new() { ["nama"] = "Andi" });
+```
+
+Jalankan contoh:
+
+```bash
+dotnet run --project example -- 7001
+```
+
 ## Fungsi yang tersedia (semua bahasa)
 
 - `insert`, `select`, `update`, `delete`
@@ -3896,6 +4435,7 @@ required.
 | React Native | `clients/react-native/teritip-rn.js` | React Native (built-in fetch) |
 | Go | `clients/go/teritip.go` | Go (standard library) |
 | Java | `clients/java/teritip/TeritipDb.java` | Java (JDK 11+, `java.net.http`) |
+| C# (.NET) | `clients/csharp/TeritipDb.cs` | .NET 6+ (`System.Net.Http`) |
 
 All clients connect to a running TeritipDB server.
 
@@ -4008,6 +4548,33 @@ Compile & run:
 ```bash
 javac -d out teritip/Json.java teritip/TeritipDb.java Example.java
 java -cp out Example
+```
+
+## C# (.NET)
+
+```csharp
+using Teritip;
+
+var db = new TeritipDb("127.0.0.1", 7001, "nx_token_anda");
+
+await db.CreateTableAsync("users", new Dictionary<string, string> {
+    ["nama"] = "text", ["umur"] = "integer",
+});
+await db.InsertAsync("users", new { nama = "Budi", umur = 30 });
+
+var rows = await db.SelectAsync("users", new SelectOpts {
+    Where = new() { ["umur"] = new Dictionary<string, object?> { [">"] = 20 } },
+});
+
+await db.UpdateAsync("users", new { umur = 31 },
+    new() { ["where"] = new Dictionary<string, object?> { ["nama"] = "Budi" } });
+await db.DeleteAsync("users", new() { ["nama"] = "Andi" });
+```
+
+Run the example:
+
+```bash
+dotnet run --project example -- 7001
 ```
 
 ## Available functions (all languages)
@@ -4299,7 +4866,7 @@ raw HTTP and WebSocket.
       navPanduan: "Panduan", navAI: "Pasang via AI", navKlien: "Klien", navDev: "Untuk Developer", navRingkasan: "Ringkasan", navSintaks: "Sintaks", navServer: "Server & Hosting",
       hcPanduan: "Cara pasang dan pakai: npm, menu teritip, HTTP, dan klien.",
       hcAI: "Salin prompt, serahkan ke AI agent untuk memasang TeritipDB.",
-      hcKlien: "Klien resmi untuk Python, JavaScript (Node), dan PHP.",
+      hcKlien: "Klien resmi: Python, JS, PHP, React Native, Go, Java, C#.",
       hcDev: "API HTTP, WebSocket, contoh curl, bangun UI sendiri.",
       hcRingkasan: "Pengantar TeritipDB, alur JSON ke engine, cara install, dan target yang didukung.",
       hcSintaks: "Semua operasi JSON: insert, update, delete, select, join, tx, where, dan agregat.",
@@ -4345,7 +4912,7 @@ raw HTTP and WebSocket.
       navPanduan: "Guide", navAI: "Install via AI", navKlien: "Clients", navDev: "For Developers", navRingkasan: "Overview", navSintaks: "Syntax", navServer: "Server & Hosting",
       hcPanduan: "How to install and use: npm, the teritip menu, HTTP, and the client.",
       hcAI: "Copy a prompt and hand it to an AI agent to install TeritipDB.",
-      hcKlien: "Official clients for Python, JavaScript (Node), and PHP.",
+      hcKlien: "Official clients: Python, JS, PHP, React Native, Go, Java, C#.",
       hcDev: "HTTP API, WebSocket, curl example, build your own UI.",
       hcRingkasan: "Intro to TeritipDB, the JSON-to-engine flow, install, and supported targets.",
       hcSintaks: "Every JSON operation: insert, update, delete, select, join, tx, where, and aggregates.",
